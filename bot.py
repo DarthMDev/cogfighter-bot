@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import random
 import json
-client = commands.Bot(command_prefix = ';')
+client = commands.Bot(command_prefix = '.')
 with open('config/config.json') as file:
 	conf = json.load(file)
 
