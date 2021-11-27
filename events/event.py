@@ -6,11 +6,26 @@ import random
 import time
 from discord.ext.tasks import loop
 import asyncio
+from replit import db
+from threading import Thread
 with open('config/config.json') as file:
-	conf = json.load(file)
-class Event(object):
+	conf = json.load(file)      
+
+class Event():  
     def __init__(self, bot: discord.Client()):
-        self.bot = bot
+      self.bot = bot
+
+
+
+    async def countDownUserCooldown(self, channel, author):
+        db["author_cooldown_" + author] = 5
+        await channel.send("On cooldown please wait 5 seconds.")
+        while db['author_cooldown_' + author] > 0:
+            
+            time.sleep(1)
+            db['author_cooldown_' + author] -= 1
+        await channel.send('Cooldown is over.')
+        
 
     @loop(seconds=600)
     async def guessNumber(self):
@@ -23,32 +38,46 @@ class Event(object):
         tries = 30
         number = random.randint(1,100)
         await channel.send('guess the number between 1 and 100')
-        #TODO points system
+        
         while tries > 0:
             message = await self.bot.wait_for('message', check=pred)
-            
+            if message.author.id == '774817348448157706':
+              continue
             try:
-                guess = int(message.content)
-            except: 
-                await channel.send('must be an integer')
-                continue
-            tries -= 1
-            #if author.cooldown:
-                #   if message.author.cooldown >=0:
-            if guess < number:
-                await channel.send('Wrong, answer is bigger than that.')
-                        #self.countDownUserCooldown(message.author)
-            elif guess > number:
-                await channel.send('Wrong , answer is smaller than that')
-                #self.countDownUserCooldown(message.author)
+              guess = int(message.content)
+            except ValueError:
+             await channel.send('Must be an integer.')
+             continue
 
-            elif guess == number:
+
+
+
+
+
+            if ['author_cooldown_' + message.author.name] not in db:
+              db['author_cooldown_' + message.author.name] = 0
+            if db['author_cooldown_' +  message.author.name] <= 0:
+              if guess < number:
+                await channel.send('Wrong, answer is larger than that.')
+                #t2 = Thread(target = self.countDownUserCooldown(message.author.name))
+                #t2.start()
+                await self.countDownUserCooldown(channel, message.author.name)
+              elif guess > number:
+                await channel.send('Wrong , answer smaller than that')
+                #t2 = Thread(target = self.countDownUserCooldown(message.author.name))
+                #t2.start()
+                await self.countDownUserCooldown(channel, message.author.name)
+
+              elif guess == number:
 
                 await channel.send("Correct! {0} You've won an award!".format(message.author.mention))
-                break
-        await asyncio.sleep(600)
-            #else:
-                 #   channel.send('You are on cooldown please wait {0} seconds'.format(author.cooldown))
+                if message.author.name not in db:
+                  db[message.author.name] = 0
+                db[message.author.name] += 5
+                await asyncio.sleep(600)
+                break         
+            else:
+                await channel.send('You are on cooldown please wait {0} seconds'.format(db['author_cooldown_' +  message.author.name]))
         if tries <= 0:
                 await channel.send('You have ran out of tries. Try again later for another round.')
                 await asyncio.sleep(600)
