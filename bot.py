@@ -275,9 +275,11 @@ async def racegame(ctx):
 async def flipcoin(ctx, arg=None, arg2=None):
     if not arg:
         await ctx.send('Must supply tails or heads')
+        flipcoin.reset_cooldown(ctx)
         return
     if arg != 'heads' and arg != 'tails':
         await ctx.send('Must supply tails or heads')
+        flipcoin.reset_cooldown(ctx)
         return
     if not arg2:
         arg2 = 1
@@ -290,7 +292,6 @@ async def flipcoin(ctx, arg=None, arg2=None):
         db[ctx.author.name] -= int(arg2)
 
     randomnum = random.randint(1, 2)
-    ctx.author.name
     if randomnum == 1:
         result = 'heads'
     elif randomnum == 2:
@@ -305,16 +306,13 @@ async def flipcoin(ctx, arg=None, arg2=None):
         await ctx.send('RIP. It landed on {0}'.format(result))
 
 
-"""@cogFighter.event
+@cogFighter.event
 async def on_command_error(ctx, error):
 	if isinstance(error, commands.CommandOnCooldown):
-		em = discord.Embed(
-		    title="Cooldown",
-		    description="Try again in {0}".format(round(error.retry_after)) +
-		    "s.")
+		em = discord.Embed(title=f"{ctx.author.name}#{ctx.author.discriminator}", description="Try again in {0}".format(round(error.retry_after)) + "s.")
 		await ctx.send(embed=em)
 
-"""
+
 # cogs = [
 #	'events.event',
 # ]
