@@ -30,3 +30,10 @@ def set_balance(id, num):
 
 # Set Balance test, Passed!
 # set_balance(1, 7905)
+
+def create_user(ctx, startingBal):
+    cur.execute("INSERT INTO users VALUES (:id, :startingBal)", {'id': ctx.author.id, 'startingBal': startingBal})
+    con.commit()
+
+# Create user test, Passed!
+# create_user(2, 39)
