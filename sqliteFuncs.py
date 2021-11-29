@@ -4,36 +4,40 @@ from discord.ext import commands
 con = sqlite3.connect('users.db')
 cur = con.cursor()
 
-def add_balance(ctx, num):
-    cur.execute("SELECT * FROM users  WHERE id = :id", {'id': ctx.author.id})
+
+# Takes the user's ID, and the amount of jelly beans to add to their balance and adds it to their balance.
+def add_balance(id, num):
+    cur.execute("SELECT * FROM users  WHERE id = :id", {'id': id})
     userBal = cur.fetchone()[1]
     userBal += num
-    cur.execute("UPDATE users SET balance = :bal WHERE id = :id", {'bal': userBal, 'id': ctx.author.id})
-    con.commit()
+    with con:
+        cur.execute("UPDATE users SET balance = :bal WHERE id = :id", {'bal': userBal, 'id': id})
 
-# Add Balance test, Passed!
-# add_balance(1, 100)
 
-def sub_balance(ctx, num):
-    cur.execute("SELECT * FROM users  WHERE id = :id", {'id': ctx.author.id})
+def sub_balance(id, num):
+    cur.execute("SELECT * FROM users  WHERE id = :id", {'id': id})
     userBal = cur.fetchone()[1]
     userBal -= num
-    cur.execute("UPDATE users SET balance = :bal WHERE id = :id", {'bal': userBal, 'id': ctx.author.id})
-    con.commit()
+    with con:
+        cur.execute("UPDATE users SET balance = :bal WHERE id = :id", {'bal': userBal, 'id': id})
 
-# Subtract Balance test, Passed!
-# sub_balance(1, 150)
 
-def set_balance(id, num):
-    cur.execute("UPDATE users SET balance = :bal WHERE id = :id", {'bal': num, 'id': id})
-    con.commit()
+def set_value(id, var, value):
+    with con:
+        cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
 
-# Set Balance test, Passed!
-# set_balance(1, 7905)
 
-def create_user(ctx, startingBal):
-    cur.execute("INSERT INTO users VALUES (:id, :startingBal)", {'id': ctx.author.id, 'startingBal': startingBal})
-    con.commit()
+def create_user(id):
+    with con:
+        cur.execute("INSERT INTO users VALUES (:id, 100, 1, 0.0, 0.0, '[]')", {'id': id})
 
-# Create user test, Passed!
-# create_user(2, 39)
+
+def fetch_data(id, var):
+    if var == 'inventory':
+        cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
+        return cur.fetchone()[0].strip('][').split(', ')
+    cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
+    return cur.fetchone()[0]
+
+# Leaving the next comment here for future reference while this file is being worked on.
+# cur.execute("CREATE TABLE users (id text, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory blob)")
