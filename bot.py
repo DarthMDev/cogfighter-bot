@@ -38,7 +38,7 @@ def choice(population, weights):
 
 
 def openLootbox():
-    crateOptions = ['Cupcake', 'Fruit Pie Slice', 'Cream Pie', 'Fruit Pie', 'Cream Pie', 'Birthday Cake', 'Wedding Cake', 'Special Gags (1-7)', 'Special Gags (8-14)']
+    crateOptions = [':cupcake~1: Cupcake', ':fruitpieslice: Fruit Pie Slice', ':creampieslice: Cream Pie Slice', ':fruitpie: Fruit Pie', ':creampie: Cream Pie', ':bday: Birthday Cake', ':wedding~1: Wedding Cake', 'Special Gags (1-7)', 'Special Gags (8-14)']
     weights = [0.18, 0.18, 0.18, 0.13, 0.13, 0.08, 0.08, 0.038, 0.002]
     result = choice(crateOptions, weights)
     return result
