@@ -77,6 +77,17 @@ def set_value(id, var, value):
     with con:
         cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
 
+def fetch_data(id, var):
+    """
+    Fetches data based on the id and which variable you want.
+    Supported vars: balance, crates, dailycooldown, weeklycooldown, inventory
+    """
+    if var == 'inventory':
+        cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
+        return cur.fetchone()[0].strip('][').split(', ')
+    cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
+    return cur.fetchone()[0]
+
 
 def create_user(id):
     """
@@ -90,17 +101,10 @@ def create_user(id):
     with con:
         cur.execute("INSERT INTO users VALUES (:id, 100, 0, 0.0, 0.0, '[]')", {'id': id})
 
-#
-def fetch_data(id, var):
-    """
-    Fetches data based on the id and which variable you want.
-    Supported vars: balance, crates, dailycooldown, weeklycooldown, inventory
-    """
-    if var == 'inventory':
-        cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
-        return cur.fetchone()[0].strip('][').split(', ')
-    cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
-    return cur.fetchone()[0]
+
+def remove_user(id):
+    with con:
+        cur.execute("DELETE from users where id = :id", {'id': id})
 
 
 def does_user_exist(id):
