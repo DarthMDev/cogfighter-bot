@@ -96,11 +96,16 @@ async def inventory(ctx):
         await ctx.send("Account Created!")
 
     displayList = (db.fetch_data(ctx.author.id, 'inventory'))
-    #newList = newList.split(',')
     if ' ' in displayList:
         displayList.remove(' ')
     if '' in displayList:
         displayList.remove('')
+    if '"' in displayList:
+        displayList.remove('"')
+    if "'" in displayList:
+        displayList.remove("'")
+    if "''" in displayList:
+        displayList.remove("''")
     print(displayList)
     newList = [[x, displayList.count(x)] for x in set(displayList)]
     newList = str(newList)
