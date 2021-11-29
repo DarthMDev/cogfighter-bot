@@ -95,12 +95,16 @@ async def inventory(ctx):
         db.create_user(ctx.author.id)
         await ctx.send("Account Created!")
 
-    displayList = db.fetch_data(ctx.author.id, 'inventory')
-    displayList = displayList.split(',')
+    displayList = (db.fetch_data(ctx.author.id, 'inventory'))
+    #newList = newList.split(',')
     if ' ' in displayList:
         displayList.remove(' ')
+    if '' in displayList:
+        displayList.remove('')
+    print(displayList)
     newList = [[x, displayList.count(x)] for x in set(displayList)]
-    await ctx.send('Inventory: ' + str(newList))
+    newList = str(newList)
+    await ctx.send('Inventory: ' + newList)
 
 
 @cogFighter.command()
