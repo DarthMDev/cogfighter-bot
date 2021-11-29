@@ -39,5 +39,11 @@ def fetch_data(id, var):
     cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
     return cur.fetchone()[0]
 
+
+def does_user_exist(id):
+    cur.execute("SELECT * FROM users WHERE id = :id", {'id': id})
+    if cur.fetchone() is None: return False
+    else: return True
+
 # Leaving the next comment here for future reference while this file is being worked on.
 # cur.execute("CREATE TABLE users (id text, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory blob)")
