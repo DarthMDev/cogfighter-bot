@@ -22,6 +22,22 @@ def sub_balance(id, num):
         cur.execute("UPDATE users SET balance = :bal WHERE id = :id", {'bal': userBal, 'id': id})
 
 
+def add_crates(id, num):
+    cur.execute("SELECT * FROM users  WHERE id = :id", {'id': id})
+    userCrates = cur.fetchone()[2]
+    userCrates += num
+    with con:
+        cur.execute("UPDATE users SET crates = :bal WHERE id = :id", {'bal': userCrates, 'id': id})
+
+
+def sub_crates(id, num):
+    cur.execute("SELECT * FROM users  WHERE id = :id", {'id': id})
+    userCrates = cur.fetchone()[2]
+    userCrates -= num
+    with con:
+        cur.execute("UPDATE users SET crates = :bal WHERE id = :id", {'bal': userCrates, 'id': id})
+
+
 def set_value(id, var, value):
     with con:
         cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
