@@ -62,7 +62,11 @@ def sub_crates(id, num):
     with con:
         cur.execute("UPDATE users SET crates = :bal WHERE id = :id", {'bal': userCrates, 'id': id})
 
-
+def add_cooldown(id, num):
+    #TODO create entry for author cooldown for the event then we can make these functions
+    pass #TODO
+def sub_cooldown(id, num):
+    pass #TODO
 def set_value(id, var, value):
     """
     Takes the user's id, the variable you want to set, and the value to set it to.

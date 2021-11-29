@@ -6,7 +6,7 @@ import random
 import time
 from discord.ext.tasks import loop
 import asyncio
-from replit import db
+import sqliteFuncs as db
 from threading import Thread
 with open('config/config.json') as file:
 	conf = json.load(file)      
@@ -18,12 +18,11 @@ class Event():
 
 
     async def countDownUserCooldown(self, channel, author):
-        db["author_cooldown_" + author] = 5
+        db.set_value(author.id, 'userCooldown', 5)
         await channel.send("On cooldown please wait 5 seconds.")
-        while db['author_cooldown_' + author] > 0:
-            
-            time.sleep(1)
-            db['author_cooldown_' + author] -= 1
+        while db.fetch_value(author.id, 'userCooldown') > 0:
+          time.sleep(1)
+          db.sub_cooldown(author.id, 1)
         await channel.send('Cooldown is over.')
         
 
@@ -53,31 +52,31 @@ class Event():
 
 
 
-
-            if ['author_cooldown_' + message.author.name] not in db:
-              db['author_cooldown_' + message.author.name] = 0
-            if db['author_cooldown_' +  message.author.name] <= 0:
+            author = message.author
+            if db.fetch_value(author.id, 'userCooldown'):
+              db.set_value(author.id, 'userCooldown', 0)
+            if db.fetch_value(author.id, 'userCooldown') <= 0:
               if guess < number:
                 await channel.send('Wrong, answer is larger than that.')
-                #t2 = Thread(target = self.countDownUserCooldown(message.author.name))
-                #t2.start()
+                t2 = Thread(target = self.countDownUserCooldown(message.author))
+                t2.start()
                 await self.countDownUserCooldown(channel, message.author.name)
               elif guess > number:
                 await channel.send('Wrong , answer smaller than that')
-                #t2 = Thread(target = self.countDownUserCooldown(message.author.name))
-                #t2.start()
-                await self.countDownUserCooldown(channel, message.author.name)
+                t2 = Thread(target = self.countDownUserCooldown(message.author))
+                t2.start()
+                await self.countDownUserCooldown(channel, message.author)
 
               elif guess == number:
 
                 await channel.send("Correct! {0} You've won an award!".format(message.author.mention))
-                if message.author.name not in db:
-                  db[message.author.name] = 0
-                db[message.author.name] += 5
+                if db.does_user_exist():
+                  db.set_value(author.id, 'userCooldown', 0)
+                db.set_value(author.id, 'userCooldown', 5)
                 await asyncio.sleep(600)
                 break         
             else:
-                await channel.send('You are on cooldown please wait {0} seconds'.format(db['author_cooldown_' +  message.author.name]))
+                await channel.send('You are on cooldown please wait {0} seconds'.format(str(db.fetch_value(author.id, 'userCooldown')) ))
         if tries <= 0:
                 await channel.send('You have ran out of tries. Try again later for another round.')
                 await asyncio.sleep(600)
