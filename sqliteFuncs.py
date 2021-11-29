@@ -62,4 +62,4 @@ def does_user_exist(id):
     else: return True
 
 # Leaving the next comment here for future reference while this file is being worked on.
-# cur.execute("CREATE TABLE users (id text, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory blob)")
+# cur.execute("CREATE TABLE users (id integer, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory blob)")
