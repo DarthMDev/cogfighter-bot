@@ -52,6 +52,7 @@ async def on_ready():
 
 
 # This function can be called under a command decorator to check if the person calling the command has the staff role.
+"""
 def is_staff():
     def checkIfStaff(ctx):
         x = []
@@ -60,11 +61,11 @@ def is_staff():
         return 'Staff' in x
 
     return commands.check(checkIfStaff)
-
+"""
 
 # This command will start the guess number event
 @cogFighter.command()
-@is_staff()
+@commands.has_any_role('Staff', 'staff', '🌌 Staff')
 async def startGuessNumber(ctx):
     event.Event(cogFighter).guessNumber.start()
 
