@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks
 import json
 from discord.ext.tasks import loop
-from replit import db
+import sqlite3
 from threading import Thread
 import os
 from events import event
@@ -10,6 +10,7 @@ import time
 import random
 from collections import Counter
 import bisect
+import sqliteFuncs as db
 
 with open('config/config.json') as file:
     conf = json.load(file)
@@ -51,18 +52,6 @@ async def on_ready():
     # t.start()
 
 
-# This function can be called under a command decorator to check if the person calling the command has the staff role.
-"""
-def is_staff():
-    def checkIfStaff(ctx):
-        x = []
-        for i in ctx.author.roles:
-            x.append(i.name)
-        return 'Staff' in x
-
-    return commands.check(checkIfStaff)
-"""
-
 # This command will start the guess number event
 @cogFighter.command()
 @commands.has_any_role('Staff', 'staff', '🌌 Staff')
@@ -72,36 +61,41 @@ async def startGuessNumber(ctx):
 
 @cogFighter.command()
 async def opencrate(ctx, arg=1):
-    if 'crates ' + ctx.author.name not in db:
-        db['crates ' + ctx.author.name] = 0
-    if 'inventory ' + ctx.author.name not in db:
-        db['inventory ' + ctx.author.name] = " "
-    newInventory = list(db['inventory ' + ctx.author.name].split(','))
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
 
-    if db['crates ' + ctx.author.name] >= arg:
+    newInventory = db.fetch_data(ctx.author.id, 'inventory')
+
+    if db.fetch_data(ctx.author.id, crates) >= arg:
         for i in range(0, arg):
             result = openLootbox()
             await ctx.send('You won a ' + result)
             newInventory.append(result)
-            db['crates ' + ctx.author.name] -= 1
 
-        db['inventory ' + ctx.author.name] = (','.join(newInventory))
+        db.sub_crates(ctx.author.id, arg)
+        db.set_value(ctx.author.id, 'inventory', newInventory)
+
     else:
         await ctx.send('You do not have enough crates.')
 
 
 @cogFighter.command()
 async def deleteinventory(ctx):
-    del db['inventory ' + ctx.author.name]
-    await ctx.send('Database entry deleted.')
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
+    db.set_value(ctx.author.id, 'inventory', '[]')
+    await ctx.send('Inventory deleted.')
 
 
 @cogFighter.command()
 async def inventory(ctx):
-    if 'inventory ' + ctx.author.name not in db:
-        db['inventory ' + ctx.author.name] = " "
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
 
-    displayList = db['inventory ' + ctx.author.name]
+    displayList = db.fetch_data(ctx.author.id, 'inventory')
     displayList = displayList.split(',')
     if ' ' in displayList:
         displayList.remove(' ')
@@ -111,10 +105,16 @@ async def inventory(ctx):
 
 @cogFighter.command()
 async def setupaccount(ctx):
-    db[ctx.author.name] = 0
-    await ctx.send('Account is now setup.')
+    db.create_user(ctx.author.id)
+    await ctx.send('Account created!')
 
+#When finalizing this command, add a double check to ensure the user means to delete their account.
+@cogFighter.command()
+async def deleteaccount(ctx):
+    db.remove_user(ctx.author.id)
+    await ctx.send('Your account is now deleted.')
 
+"""
 @cogFighter.command()
 async def givecrates(ctx, member: discord.Member = None, arg2=1):
     if member == None:
@@ -123,67 +123,56 @@ async def givecrates(ctx, member: discord.Member = None, arg2=1):
         db['crates ' + member.name] = 0
     db['crates ' + member.name] += arg2
     await ctx.send(member.name + ' has been given ' + str(arg2) + ' crates.')
-
+"""
 
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
 async def getbalance(ctx):
-    if ctx.author.name not in db:
-        db[ctx.author.name] = 0
-        await ctx.send('Account is now setup.')
-    await ctx.send('You have: {0}'.format(db[ctx.author.name]) + ' jellybeans')
-
-
-@cogFighter.command()
-async def deleteaccount(ctx):
-    del db[ctx.author.name]
-    await ctx.send('Your account is now deleted.')
-
-
-async def giveCrate(ctx):
-    if 'crates ' + ctx.author.name not in db:
-        db['crates ' + ctx.author.name] = 0
-    db['crates ' + ctx.author.name] += 1
-    await ctx.send('You have been given 1 crate.')
-    db[ctx.author.name + ' dailyCD'] = time.time()
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
+    await ctx.send('You have: {0}'.format(db.fetch_data(ctx.author.id, 'balance')) + ' jellybeans')
 
 
 @cogFighter.command()
 # @commands.cooldown(1, 60 * 60 * 24, commands.BucketType.user)
 async def daily(ctx):
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
     hourWait = 24
     timeNow = time.time()
-    if ctx.author.name + ' dailyCD' in db:
-        data = db[ctx.author.name + ' dailyCD']
+    if db.does_user_exist(ctx.author.id):
+        data = db.fetch_data(ctx.author.id, 'dailycooldown')
         timeSinceLastClaimed = timeNow - data
         if (timeSinceLastClaimed / 3600) >= hourWait:
-            await giveCrate(ctx)
+            db.add_crates(ctx.author.id, 1)
+            db.set_value(ctx.author.id, 'dailycooldown', time.time())
+            await ctx.send("Daily reawrd claimed!")
         else:
             await ctx.send('You have to wait {0} hours. '.format(round(hourWait - (timeSinceLastClaimed / 3600))))
 
     else:
-        await giveCrate(ctx)
+        return
 
 
 async def giveWeekly(ctx):
-    if 'crates ' + ctx.author.name not in db:
-        db['crates ' + ctx.author.name] = 0
-    if ctx.author.name not in db:
-        db[ctx.author.name] = 0
-    db['crates ' + ctx.author.name] += 3
-    db[ctx.author.name] += 5
-    await ctx.send("You have been awarded 3 crates and 5 jellybeans.")
+    db.add_crates(ctx.author.id, 3)
+    db.add_balance(ctx.author.id, 5)
+    await ctx.send("Weekly reward claimed!")
 
-    db[ctx.author.name + ' weeklyCD'] = time.time()
-
+    db.set_value(ctx.author.id, 'weeklycooldown', time.time())
 
 @cogFighter.command()
 # @commands.cooldown(1, 604800, commands.BucketType.user)
 async def weekly(ctx):
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
     daysWait = 7
     timeNow = time.time()
 
-    if ctx.author.name + ' weeklyCD' in db:
-        data = db[ctx.author.name + ' weeklyCD']
+    if db.does_user_exist(ctx.author.id):
+        data = db.fetch_data(ctx.author.id, 'weeklycooldown')
         timeSinceLastClaimed = timeNow - data
         if (timeSinceLastClaimed / (60 * 60 * 24)) >= daysWait:
             await giveWeekly(ctx)
@@ -196,15 +185,19 @@ async def weekly(ctx):
 
 @cogFighter.command()
 async def crates(ctx):
-    if 'crates {0}'.format(ctx.author.name) not in db:
-        db['crates {0}'.format(ctx.author.name)] = 0
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
 
-    value = db['crates {0}'.format(ctx.author.name)]
+    value = db.fetch_data(ctx.author.id, 'crates')
     await ctx.send('You have: {0}'.format(value) + ' crates')
 
 
 @cogFighter.command()
 async def racegame(ctx):
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
     bot1total = 0
     bot2total = 0
     bot3total = 0
@@ -216,8 +209,8 @@ async def racegame(ctx):
     def pred():
         return True
 
-    if ctx.author.name not in db:
-        db[ctx.author.name] = 0
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
     while True:
         bot1num = random.randint(1, 4)
         bot2num = random.randint(1, 4)
@@ -267,13 +260,16 @@ async def racegame(ctx):
         if usertotal >= numberToWin:
             await ctx.send('You won ! Congrats!')
             await ctx.send('You won {0} jellybeans.'.format(prize))
-            db[ctx.author.name] += prize
+            db.add_balance(ctx.author.id, prize)
             break
 
 
 @cogFighter.command()
 @commands.cooldown(1, 60, commands.BucketType.user)
 async def flipcoin(ctx, arg=None, arg2=None):
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send("Account Created!")
     if not arg:
         await ctx.send('Must supply tails or heads')
         flipcoin.reset_cooldown(ctx)
@@ -284,13 +280,13 @@ async def flipcoin(ctx, arg=None, arg2=None):
         return
     if not arg2:
         arg2 = 1
-    if ctx.author.name not in db:
-        db[ctx.author.name] = 0
-    if db[ctx.author.name] < int(arg2):
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+    if db.fetch_data(ctx.author.id, 'balance') < int(arg2):
         await ctx.send('You do not have enough jellybeans.')
         return
     else:
-        db[ctx.author.name] -= int(arg2)
+        db.sub_balance(ctx.author.id, arg2)
 
     randomnum = random.randint(1, 2)
     if randomnum == 1:
@@ -302,7 +298,7 @@ async def flipcoin(ctx, arg=None, arg2=None):
             'Congrats! It landed on {0} You won {1} jellybeans'.format(
                 result,
                 int(arg2) * 2))
-        db[ctx.author.name] += int(arg2) * 2
+        db.add_balance(ctx.author.id, arg2*2)
     else:
         await ctx.send('RIP. It landed on {0}'.format(result))
 
