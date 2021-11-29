@@ -56,8 +56,8 @@ def is_staff():
     def checkIfStaff(ctx):
         x = []
         for i in ctx.author.roles:
-            x.append(i)
-        return ctx.guild.roles[-2] in x
+            x.append(i.name)
+        return 'Staff' in x
 
     return commands.check(checkIfStaff)
 
@@ -306,11 +306,11 @@ async def flipcoin(ctx, arg=None, arg2=None):
         await ctx.send('RIP. It landed on {0}'.format(result))
 
 
-@cogFighter.event
-async def on_command_error(ctx, error):
-	if isinstance(error, commands.CommandOnCooldown):
-		em = discord.Embed(title=f"{ctx.author.name}#{ctx.author.discriminator}", description="Try again in {0}".format(round(error.retry_after)) + "s.")
-		await ctx.send(embed=em)
+# @cogFighter.event
+# async def on_command_error(ctx, error):
+# 	if isinstance(error, commands.CommandOnCooldown):
+# 		em = discord.Embed(title=f"{ctx.author.name}#{ctx.author.discriminator}", description="Try again in {0}".format(round(error.retry_after)) + "s.")
+# 		await ctx.send(embed=em)
 
 
 # cogs = [
