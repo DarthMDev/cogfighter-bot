@@ -79,12 +79,10 @@ def set_value(id, var, value):
     value: For balance and crates, Int. for dailycooldoqn and weeklycooldown, Float. For inventory, List
     """
     if var == 'inventory':
-        commit = []
-        for i in value:
-            commit.append(i.strip("{}{}".format('"', "'")))
-        commit = str(commit)
+        if '' in value:
+            value.remove('')
         with con:
-            cur.execute("UPDATE users SET {} = :commit WHERE id = :id".format(var), {'commit': commit, 'id': id})
+            cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
         return
     with con:
         cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
@@ -99,6 +97,8 @@ def fetch_data(id, var):
         x = cur.fetchone()[0].strip("[]").split(', ')
         y = []
         for i in x: y.append(i.strip("{}{}".format("'", '"')))
+        if '' in y:
+            y.remove('')
         return y
     cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
     return cur.fetchone()[0]
