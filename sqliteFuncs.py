@@ -74,11 +74,11 @@ def set_value(id, var, value):
     value: For balance and crates, Int. for dailycooldoqn and weeklycooldown, Float. For inventory, List
     """
     if var == 'inventory':
-        if '' in value:
-            value.remove('')
-        value = str(value)
+        # creates an iterator that performs the str function on every item in value, then separates each value with a space using .join
+        iterator = map(str, value)
+        y = " ".join(list(iterator))
         with con:
-            cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
+            cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': y, 'id': id})
         return
     with con:
         cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
@@ -92,7 +92,10 @@ def fetch_data(id, var):
     if var == 'inventory':
         cur.execute("SELECT inventory FROM 'users' WHERE id = :id", {'id': id})
         x = cur.fetchone()[0]
-        y = x.split(' ')
+        x = x.split(' ')
+        print(x)
+        y = []
+        for i in x: y.append(int(i))
         return y
     cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
     return cur.fetchone()[0]
@@ -125,6 +128,5 @@ def does_user_exist(id):
 
 # Leaving the next comment here for future reference while this file is being worked on.
 # cur.execute("CREATE TABLE users (id integer, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory text)")
-#inv = fetch_data(1, 'inventory')
-#inv[0] = 2
-#set_value(1, 'inventory', inv)
+if __name__ == "__main__":
+    set_value(1, 'inventory', [1, 2, 3, 4, 5, 6, 7])
