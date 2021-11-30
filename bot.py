@@ -72,10 +72,12 @@ async def opencrate(ctx, arg=1):
     newInventory = db.fetch_data(ctx.author.id, 'inventory')
 
     if db.fetch_data(ctx.author.id, crates) >= arg:
+        message = "You won:"
         for i in range(0, arg):
             result = openLootbox()
-            await ctx.send('You won a ' + result)
+            message += f"\n{result}"
             newInventory.append(result)
+        await ctx.send(message)
 
         db.sub_crates(ctx.author.id, arg)
         db.set_value(ctx.author.id, 'inventory', newInventory)
