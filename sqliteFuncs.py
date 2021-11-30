@@ -62,11 +62,16 @@ def sub_crates(id, num):
     with con:
         cur.execute("UPDATE users SET crates = :bal WHERE id = :id", {'bal': userCrates, 'id': id})
 
+
 def add_cooldown(id, num):
     #TODO create entry for author cooldown for the event then we can make these functions
     pass #TODO
+
+
 def sub_cooldown(id, num):
     pass #TODO
+
+
 def set_value(id, var, value):
     """
     Takes the user's id, the variable you want to set, and the value to set it to.
@@ -74,10 +79,13 @@ def set_value(id, var, value):
     value: For balance and crates, Int. for dailycooldoqn and weeklycooldown, Float. For inventory, List
     """
     if var == 'inventory':
-        value = str(value)
+        commit = []
+        for i in value:
+            commit.append(i.strip("{}{}".format('"', "'")))
+        commit = str(commit)
         with con:
-            cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
-
+            cur.execute("UPDATE users SET {} = :commit WHERE id = :id".format(var), {'commit': commit, 'id': id})
+        return
     with con:
         cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
 
@@ -88,7 +96,10 @@ def fetch_data(id, var):
     """
     if var == 'inventory':
         cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
-        return cur.fetchone()[0].strip('][').split(', ')
+        x = cur.fetchone()[0].strip("[]").split(', ')
+        y = []
+        for i in x: y.append(i.strip("{}{}".format("'", '"')))
+        return y
     cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
     return cur.fetchone()[0]
 
@@ -119,5 +130,6 @@ def does_user_exist(id):
     if cur.fetchone() is None: return False
     else: return True
 
+
 # Leaving the next comment here for future reference while this file is being worked on.
-# cur.execute("CREATE TABLE users (id integer, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory blob)")
+# cur.execute("CREATE TABLE users (id integer, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory text)")
