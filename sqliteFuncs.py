@@ -125,6 +125,6 @@ def does_user_exist(id):
 
 # Leaving the next comment here for future reference while this file is being worked on.
 # cur.execute("CREATE TABLE users (id integer, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory text)")
-inv = fetch_data(1, 'inventory')
-inv[0] = 2
-set_value(1, 'inventory', inv)
+#inv = fetch_data(1, 'inventory')
+#inv[0] = 2
+#set_value(1, 'inventory', inv)
