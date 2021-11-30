@@ -93,7 +93,6 @@ def fetch_data(id, var):
         cur.execute("SELECT inventory FROM 'users' WHERE id = :id", {'id': id})
         x = cur.fetchone()[0]
         x = x.split(' ')
-        print(x)
         y = []
         for i in x: y.append(int(i))
         return y
@@ -128,5 +127,3 @@ def does_user_exist(id):
 
 # Leaving the next comment here for future reference while this file is being worked on.
 # cur.execute("CREATE TABLE users (id integer, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory text)")
-if __name__ == "__main__":
-    set_value(1, 'inventory', [1, 2, 3, 4, 5, 6, 7])

@@ -1,4 +1,6 @@
-
+venv
 config/config.json
 *.pyc
 cogs/__pycache__/games.cpython-38.pyc
+.idea
+users.db
