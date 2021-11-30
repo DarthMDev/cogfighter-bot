@@ -103,7 +103,11 @@ def fetch_data(id, var):
     cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
     return cur.fetchone()[0]
 
-
+def clear_db():
+    """
+    Wipes the database
+    RUN AT YOUR OWN RISK
+    """
 def create_user(id):
     """
     Creates a new user in the database based on the id specified

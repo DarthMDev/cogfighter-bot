@@ -16,9 +16,8 @@ with open('config/config.json') as file:
     conf = json.load(file)
 
 TOKEN = conf.get('token')
-
-cogFighter = commands.Bot(command_prefix=conf.get('prefix'))
-
+PREFIX = conf.get('prefix')
+cogFighter = commands.Bot(command_prefix=PREFIX)
 
 def cdf(weights):
     total = sum(weights)
@@ -323,13 +322,15 @@ async def flipcoin(ctx, arg=None, arg2=None):
 # 		await ctx.send(embed=em)
 
 
-# cogs = [
-#	'events.event',
-# ]
 
-# for cog in cogs:
-# print('loading cog: {0}'.format(cog))
-# cogFighter.load_extension(cog)
+cogs = [
+   # "cogs.events",
+    #"cogs.commands",
+    #"cogs.modcommands",
+]
+for cog in cogs:
+    print('loading cog: {0}'.format(cog))
+    cogFighter.load_extension(cog)
 
 # @cogFighter.event
 # async def on_command_error(ctx, error):
