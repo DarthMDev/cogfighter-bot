@@ -61,9 +61,9 @@ async def startGuessNumber(ctx):
     event.Event(cogFighter).guessNumber.start()
 
 @cogFighter.command(aliases=['givemecrates', 'gib'])
-async def giveMeCrates(ctx):
-    db.add_crates(ctx.author.id, 100)
-    await ctx.send("There's 100 crates...")
+async def giveMeCrates(ctx, num):
+    db.add_crates(ctx.author.id, num)
+    await ctx.send(f"There's {str(num)} crates...")
 
 @cogFighter.command(aliases=['opencrates', 'oc'])
 async def opencrate(ctx, arg=1):
