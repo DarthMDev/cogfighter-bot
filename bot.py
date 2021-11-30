@@ -73,10 +73,19 @@ async def opencrate(ctx, arg=1):
 
     if db.fetch_data(ctx.author.id, crates) >= arg:
         message = "You won:"
+        results = []
         for i in range(0, arg):
+
             result = openLootbox()
-            message += f"\n{result}"
+            results.append(result)
             newInventory.append(result)
+        newResults = [[x, results.count(x)] for x in set(results)]
+        message += f"\n"
+
+        for x in newResults:
+            message += "{0} x{1}\n".format(x[0], x[1])
+       # await ctx.send("Results: {0}".format(newResults))
+
         await ctx.send(message)
 
         db.sub_crates(ctx.author.id, arg)
