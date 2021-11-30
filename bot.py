@@ -58,6 +58,10 @@ async def on_ready():
 async def startGuessNumber(ctx):
     event.Event(cogFighter).guessNumber.start()
 
+@cogFighter.command()
+async def giveMeCrates(ctx):
+    db.add_crates(ctx.author.id, 100)
+    await ctx.send("There's 100 crates...")
 
 @cogFighter.command()
 async def opencrate(ctx, arg=1):
@@ -96,17 +100,6 @@ async def inventory(ctx):
         await ctx.send("Account Created!")
 
     displayList = (db.fetch_data(ctx.author.id, 'inventory'))
-    if ' ' in displayList:
-        displayList.remove(' ')
-    if '' in displayList:
-        displayList.remove('')
-    if '"' in displayList:
-        displayList.remove('"')
-    if "'" in displayList:
-        displayList.remove("'")
-    if "''" in displayList:
-        displayList.remove("''")
-    print(displayList)
     newList = [[x, displayList.count(x)] for x in set(displayList)]
     newList = str(newList)
     await ctx.send('Inventory: ' + newList)
