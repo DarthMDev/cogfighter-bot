@@ -60,10 +60,21 @@ async def on_ready():
 async def startGuessNumber(ctx):
     event.Event(cogFighter).guessNumber.start()
 
-@cogFighter.command(aliases=['givemecrates', 'gib', 'givecrates'])
+
+@cogFighter.command(aliases=['givemecrates', 'gibc', 'givecrates'])
 async def giveMeCrates(ctx, num):
     db.add_crates(ctx.author.id, int(num))
-    await ctx.send(f"There's {str(num)} crates...")
+    await ctx.send(f"There's {num} crates...")
+
+@cogFighter.command(aliases=['gibj','givemejb','givejb'])
+async def giveMeJB(ctx, num):
+    db.add_balance(ctx.author.id, int(num))
+    await ctx.send(f"{num} jellybeans have been added!")
+
+@cogFighter.command(aliases=['setbal','setbalance','set'])
+async def setjbBalance(ctx, num):
+    db.set_value(ctx.author.id, 'balance', int(num))
+    await ctx.send(f"balance has been set to {num}")
 
 @cogFighter.command(aliases=['opencrates', 'oc'])
 async def opencrate(ctx, arg=1):
@@ -126,6 +137,7 @@ async def setupaccount(ctx):
     db.create_user(ctx.author.id)
     await ctx.send('Account created!')
 
+
 #When finalizing this command, add a double check to ensure the user means to delete their account.
 @cogFighter.command()
 async def deleteaccount(ctx):
@@ -179,6 +191,7 @@ async def giveWeekly(ctx):
     await ctx.send("Weekly reward claimed!")
 
     db.set_value(ctx.author.id, 'weeklycooldown', time.time())
+
 
 @cogFighter.command()
 # @commands.cooldown(1, 604800, commands.BucketType.user)
@@ -268,7 +281,6 @@ async def racegame(ctx):
         if bot2total >= numberToWin:
             await ctx.send('Better luck next time bot 2 has won.')
             break
-
         if bot3total >= numberToWin:
             await ctx.send('Better luck next time bot 3 has won.')
             break
@@ -283,40 +295,37 @@ async def racegame(ctx):
 
 
 @cogFighter.command()
-@commands.cooldown(1, 60, commands.BucketType.user)
-async def flipcoin(ctx, arg=None, arg2=None):
+# @commands.cooldown(1, 60, commands.BucketType.user)
+async def flipcoin(ctx, arg=None, arg2=1):
     if not db.does_user_exist(ctx.author.id):
         db.create_user(ctx.author.id)
         await ctx.send("Account Created!")
+
     if not arg:
-        await ctx.send('Must supply tails or heads')
-        flipcoin.reset_cooldown(ctx)
-        return
-    if arg != 'heads' and arg != 'tails':
-        await ctx.send('Must supply tails or heads')
-        flipcoin.reset_cooldown(ctx)
-        return
-    if not arg2:
-        arg2 = 1
-    if not db.does_user_exist(ctx.author.id):
-        db.create_user(ctx.author.id)
-    if db.fetch_data(ctx.author.id, 'balance') < int(arg2):
-        await ctx.send('You do not have enough jellybeans.')
-        return
+        await ctx.send("No arguments provided")
+
+
+    if arg.lower() == 'heads' or arg.lower() == 'tails':
+        if db.bal(ctx.author.id) >= int(arg2):
+            db.sub_balance(ctx.author.id, arg2)
+        else:
+            await ctx.send('You do not have enough jellybeans.')
+            return
     else:
-        db.sub_balance(ctx.author.id, arg2)
+        await ctx.send('Must supply tails or heads')
+        flipcoin.reset_cooldown(ctx)
+        return
+
+
 
     randomnum = random.randint(1, 2)
     if randomnum == 1:
         result = 'heads'
     elif randomnum == 2:
         result = 'tails'
-    if arg == result:
-        await ctx.send(
-            'Congrats! It landed on {0} You won {1} jellybeans'.format(
-                result,
-                int(arg2) * 2))
-        db.add_balance(ctx.author.id, arg2*2)
+    if arg.lower() == result:
+        await ctx.send(f"Congrats! It landed on {result}, you earned {int(arg2) * 2} jellybeans!")
+        db.add_balance(ctx.author.id, int(arg2)*2)
     else:
         await ctx.send('RIP. It landed on {0}'.format(result))
 
@@ -338,9 +347,4 @@ for cog in cogs:
     print('loading cog: {0}'.format(cog))
     cogFighter.load_extension(cog)
 
-# @cogFighter.event
-# async def on_command_error(ctx, error):
-#   if isinstance(error, commands.CommandOnCooldown):
-#    em = discord.Embed(title="Cooldown",description="Try again in {0}".format(round(error.retry_after)) + "s.")
-#   await ctx.send(embed=em)
 cogFighter.run(TOKEN)
