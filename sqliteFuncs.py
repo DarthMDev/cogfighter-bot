@@ -81,6 +81,7 @@ def set_value(id, var, value):
     if var == 'inventory':
         if '' in value:
             value.remove('')
+        value = str(value)
         with con:
             cur.execute("UPDATE users SET {} = :value WHERE id = :id".format(var), {'value': value, 'id': id})
         return
@@ -132,3 +133,4 @@ def does_user_exist(id):
 
 # Leaving the next comment here for future reference while this file is being worked on.
 # cur.execute("CREATE TABLE users (id integer, balance integer, crates integer, dailycooldown real, weeklycooldown real, inventory text)")
+
