@@ -20,6 +20,7 @@ PREFIX = conf.get('prefix')
 cogFighter = commands.Bot(command_prefix=PREFIX)
 
 gagList = ['<:cupcake:914821822875316224> Cupcake', '<:fruitpieslice:914821822812409898> Fruit Pie Slice', '<:creampieslice:914821822598512702> Cream Pie Slice', '<:fruitpie:914821822875320330> Fruit Pie', '<:creampie:914821822229405726> Cream Pie', '<:bday:914821822715936788> Birthday Cake', '<:wedding:914821822632067152> Wedding Cake', 'Special Gags (1-7)', 'Special Gags (8-10)']
+gags = ['Cupcake', 'Fruit Pie Slice', 'Cream Pie Slice', '']
 
 def cdf(weights):
     total = sum(weights)
@@ -64,7 +65,7 @@ async def giveMeCrates(ctx):
     db.add_crates(ctx.author.id, 100)
     await ctx.send("There's 100 crates...")
 
-@cogFighter.command()
+@cogFighter.command(aliases=['opencrates', 'oc'])
 async def opencrate(ctx, arg=1):
     if not db.does_user_exist(ctx.author.id):
         db.create_user(ctx.author.id)
@@ -90,7 +91,7 @@ async def opencrate(ctx, arg=1):
         db.set_value(ctx.author.id, 'inventory', newInventory)
 
     else:
-        await ctx.send('You do not have enough crates.')
+        await ctx.send('You only have {} crates.'.format(str(db.fetch_data(ctx.author.id, 'crates'))))
 
 
 @cogFighter.command()
@@ -102,7 +103,7 @@ async def deleteinventory(ctx):
     await ctx.send('Inventory deleted.')
 
 
-@cogFighter.command()
+@cogFighter.command(aliases=['inv', 'gags'])
 async def inventory(ctx):
     if not db.does_user_exist(ctx.author.id):
         db.create_user(ctx.author.id)
