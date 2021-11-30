@@ -19,6 +19,8 @@ TOKEN = conf.get('token')
 PREFIX = conf.get('prefix')
 cogFighter = commands.Bot(command_prefix=PREFIX)
 
+gagList = ['<:cupcake:914821822875316224> Cupcake', '<:fruitpieslice:914821822812409898> Fruit Pie Slice', '<:creampieslice:914821822598512702> Cream Pie Slice', '<:fruitpie:914821822875320330> Fruit Pie', '<:creampie:914821822229405726> Cream Pie', '<:bday:914821822715936788> Birthday Cake', '<:wedding:914821822632067152> Wedding Cake', 'Special Gags (1-7)', 'Special Gags (8-10)']
+
 def cdf(weights):
     total = sum(weights)
     result = []
@@ -38,7 +40,7 @@ def choice(population, weights):
 
 
 def openLootbox():
-    crateOptions = ['<:cupcake:914821822875316224> Cupcake', '<:fruitpieslice:914821822812409898> Fruit Pie Slice', '<:creampieslice:914821822598512702> Cream Pie Slice', '<:fruitpie:914821822875320330> Fruit Pie', '<:creampie:914821822229405726> Cream Pie', '<:bday:914821822715936788> Birthday Cake', '<:wedding:914821822632067152> Wedding Cake', 'Special Gags (1-7)', 'Special Gags (8-10)']
+    crateOptions = gagList
     weights = [0.18, 0.18, 0.18, 0.13, 0.13, 0.08, 0.08, 0.038, 0.002]
     result = choice(crateOptions, weights)
     return result
@@ -71,18 +73,15 @@ async def opencrate(ctx, arg=1):
     newInventory = db.fetch_data(ctx.author.id, 'inventory')
 
     if db.fetch_data(ctx.author.id, crates) >= arg:
-        message = "You won:"
+        message = f"You opened {str(arg)} crate(s) and recieved:"
         results = []
         for i in range(0, arg):
-
             result = openLootbox()
             results.append(result)
             newInventory.append(result)
-        newResults = [[x, results.count(x)] for x in set(results)]
-        message += f"\n"
+        for i in range(len(gagList)):
+            if results.count(gagList[i]) > 0: message += f"\n{gagList[i]} x{results.count(gagList[i])}"
 
-        for x in newResults:
-            message += "> {0} x{1}\n".format(x[0], x[1])
        # await ctx.send("Results: {0}".format(newResults))
 
         await ctx.send(message)
@@ -108,12 +107,11 @@ async def inventory(ctx):
     if not db.does_user_exist(ctx.author.id):
         db.create_user(ctx.author.id)
         await ctx.send("Account Created!")
-    message = "> Inventory: "
-    displayList = (db.fetch_data(ctx.author.id, 'inventory'))
-    newList = [[x, displayList.count(x)] for x in set(displayList)]
-    for x in newList:
-        message += "{0} x{1}\n".format(x[0], x[1])
-    newList = str(newList)
+
+    inv = (db.fetch_data(ctx.author.id, 'inventory'))
+    message = f"{ctx.author.name}#{ctx.author.discriminator}'s Inventory:"
+    for i in range(len(gagList)):
+        if inv.count(gagList[i]) > 0: message += f"\n{gagList[i]} x{inv.count(gagList[i])}"
 
     await ctx.send(message)
 
