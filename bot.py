@@ -81,7 +81,9 @@ async def opencrate(ctx, arg=1):
             results.append(result)
             newInventory.append(result)
         for i in range(len(gagList)):
-            if results.count(gagList[i]) > 0: message += f"\n{gagList[i]} x{results.count(gagList[i])}"
+            #When you open crates and  get 0 of that gag it will not show
+            if results.count(gagList[i]) > 0:
+                 message += f"\n{gagList[i]} x{results.count(gagList[i])}"
 
        # await ctx.send("Results: {0}".format(newResults))
 
@@ -112,7 +114,9 @@ async def inventory(ctx):
     inv = (db.fetch_data(ctx.author.id, 'inventory'))
     message = f"{ctx.author.name}#{ctx.author.discriminator}'s Inventory:"
     for i in range(len(gagList)):
-        if inv.count(gagList[i]) > 0: message += f"\n{gagList[i]} x{inv.count(gagList[i])}"
+        #If the user has an amount of 0 for a  gag in the list of gags it will not show.
+        if inv.count(gagList[i]) > 0:
+             message += f"\n{gagList[i]} x{inv.count(gagList[i])}"
 
     await ctx.send(message)
 
