@@ -38,6 +38,7 @@ class Shop(commands.Cog):
         for x in self.getItems():
             if self.getItems()[x] == item:
                 indexNumber = x
+                break
         price = self.getPriceofItem(indexNumber)
         if db.fetch_data(ctx.author.id, 'balance') < price :
             await ctx.send('You do not have enough jellybeans.')
