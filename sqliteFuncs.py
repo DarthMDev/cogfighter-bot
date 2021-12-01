@@ -17,7 +17,7 @@ def bal(id: int) -> int:
 # Takes the user's ID, and the amount of jelly beans to add to their balance and adds it to their balance.
 def add_balance(id: int, num: int):
     """
-    A function that takes a user's id and a number 
+    A function that takes a user's id and a number
     and adds that number to their balance.
     """
     userBal = bal(id)
@@ -28,7 +28,7 @@ def add_balance(id: int, num: int):
 
 def sub_balance(id: int, num: int):
     """
-        A function that takes a user's id and a number 
+        A function that takes a user's id and a number
         and subtracts that number from their balance.
     """
     userBal = bal(id)
@@ -94,12 +94,7 @@ def fetch_data(id: int, var: str) -> any:
     """
     if var == 'inventory':
         cur.execute("SELECT inventory FROM 'users' WHERE id = :id", {'id': id})
-        row = cur.fetchone()[0]
-        row = row.split(' ')
-        inv = []
-        for i in row:
-            inv.append(int(i))
-        return inv
+        return list(map(int, cur.fetchone()[0].split(' ')))
     cur.execute("SELECT {} FROM 'users' WHERE id = :id".format(var), {'id': id})
     return cur.fetchone()[0]
 
