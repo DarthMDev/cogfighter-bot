@@ -104,7 +104,7 @@ def fetch_data(id: int, var: str) -> any:
     return cur.fetchone()[0]
 
 
-def add_item(id: int, item: str, num: int) -> None:
+def add_item(id: int, item: str, num: int=1) -> None:
 
     inv = fetch_data(id, 'inventory')
     index = gags.index(item)
@@ -112,7 +112,7 @@ def add_item(id: int, item: str, num: int) -> None:
     set_value(id, 'inventory', inv)
 
 
-def sub_item(id: int, item: str, num: int) -> None:
+def sub_item(id: int, item: str, num: int=1) -> None:
 
     inv = fetch_data(id, 'inventory')
     index = gags.index(item)
