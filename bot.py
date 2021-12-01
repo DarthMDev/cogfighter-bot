@@ -11,7 +11,6 @@ import random
 from collections import Counter
 import bisect
 import sqliteFuncs as db
-
 with open('config/config.json') as file:
     conf = json.load(file)
 
@@ -321,6 +320,7 @@ async def flipcoin(ctx, arg=None, arg2=1):
 
 
 cogs = [
+    "cogs.shop"
     # "cogs.events",
     # "cogs.commands",
     # "cogs.modcommands",
