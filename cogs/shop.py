@@ -44,6 +44,10 @@ class Shop(commands.Cog):
 
     @commands.command(aliases=['purchase'], pass_context = True)
     async def buy(self, ctx, *args ):
+
+        if not db.does_user_exist(ctx.author.id):
+            db.create_user(ctx.author.id)
+            await ctx.send("Account created")
         #args is the item the user wants
         item = (" ".join(args[:]))
         try:
