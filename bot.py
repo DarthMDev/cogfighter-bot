@@ -11,7 +11,6 @@ import random
 from collections import Counter
 import bisect
 import sqliteFuncs as db
-
 with open('config/config.json') as file:
     conf = json.load(file)
 
@@ -60,10 +59,12 @@ async def on_ready():
 async def startGuessNumber(ctx):
     event.Event(cogFighter).guessNumber.start()
 
+
 @cogFighter.command(aliases=['givemecrates', 'gib', 'givecrates'])
 async def giveMeCrates(ctx, num):
     db.add_crates(ctx.author.id, int(num))
     await ctx.send(f"There's {str(num)} crates...")
+    
 
 @cogFighter.command(aliases=['opencrates', 'oc'])
 async def opencrate(ctx, arg=1):
@@ -333,6 +334,7 @@ cogs = [
    # "cogs.events",
     #"cogs.commands",
     #"cogs.modcommands",
+    "cogs.shop"
 ]
 for cog in cogs:
     print('loading cog: {0}'.format(cog))
