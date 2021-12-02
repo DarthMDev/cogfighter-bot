@@ -18,7 +18,7 @@ TOKEN = conf.get('token')
 PREFIX = conf.get('prefix')
 cogFighter = commands.Bot(command_prefix=PREFIX)
 
-gagEmos = ['<:cupcake:914821822875316224> Cupcake', '<:fruitpieslice:914821822812409898> Fruit Pie Slice', '<:creampieslice:914821822598512702> Cream Pie Slice', '<:fruitpie:914821822875320330> Fruit Pie', '<:creampie:914821822229405726> Cream Pie', '<:bday:914821822715936788> Birthday Cake', '<:wedding:914821822632067152> Wedding Cake']
+gagEmos = ['<:cupcake:914821822875316224>', '<:fruitpieslice:914821822812409898>', '<:creampieslice:914821822598512702>', '<:fruitpie:914821822875320330>', '<:creampie:914821822229405726>', '<:bday:914821822715936788>', '<:wedding:914821822632067152>']
 gags = ['Cupcake', 'Fruit Pie Slice', 'Cream Pie Slice', 'Fruit Pie', 'Cream Pie', 'Birthday Cake', 'Wedding Cake']
 
 
@@ -95,7 +95,7 @@ async def opencrate(ctx, arg=1):
         message = f"You opened {str(arg)} crate(s) and recieved:"
         for i in range(len(gags)):
             if counts[i] > 0:
-                message += f"\n{gagEmos[i]} x{counts[i]}"
+                message += f"\n{gagEmos[i]} {gags[i]} x{counts[i]}"
 
         inv = [counts[i] + int(inv[i]) for i in range(len(counts))]
 
@@ -129,7 +129,7 @@ async def inventory(ctx):
     message = f"{ctx.author.name}#{ctx.author.discriminator}'s Inventory:"
     for i in range(len(gags)):
         # If the user has an amount of 0 for a  gag in the list of gags it will not show.
-        if inv[i] > 0: message += f"\n{gagEmos[i]} x{inv[i]}"
+        if inv[i] > 0: message += f"\n{gagEmos[i]} {gags[i]} x{inv[i]}"
 
     await ctx.send(message)
 
