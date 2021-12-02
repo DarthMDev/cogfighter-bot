@@ -105,7 +105,7 @@ async def opencrate(ctx, arg=1):
         db.set_value(ctx.author.id, 'inventory', inv)
 
     else:
-        await ctx.send('You only have {} crates.'.format(str(db.fetch_data(ctx.author.id, 'crates'))))
+        await ctx.send(f'You only have {str(db.fetch_data(ctx.author.id, "crates"))} crates.')
 
 
 @cogFighter.command()
@@ -160,7 +160,7 @@ async def givecrates(ctx, member: discord.Member = None, arg2=1):
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
 async def getbalance(ctx):
     await createAccount(ctx)
-    await ctx.send('You have: {0}'.format(db.fetch_data(ctx.author.id, 'balance')) + ' jellybeans')
+    await ctx.send(f'You have: {db.fetch_data(ctx.author.id, "balance")}' + ' jellybeans')
 
 
 @cogFighter.command()
@@ -177,7 +177,7 @@ async def daily(ctx):
             db.set_value(ctx.author.id, 'dailycooldown', time.time())
             await ctx.send("Daily reawrd claimed!")
         else:
-            await ctx.send('You have to wait {0} hours. '.format(round(hourWait - (timeSinceLastClaimed / 3600))))
+            await ctx.send(f'You have to wait {round(hourWait - (timeSinceLastClaimed / 3600))} hours. ')
 
     else:
         return
@@ -201,7 +201,7 @@ async def weekly(ctx):
         if (timeSinceLastClaimed / (60 * 60 * 24)) >= 7:
             await giveWeekly(ctx)
         else:
-            await ctx.send('You have to wait {0} days. '.format(round(7 - (timeSinceLastClaimed / (60 * 60 * 24)))))
+            await ctx.send(f'You have to wait {round(7 - (timeSinceLastClaimed / (60 * 60 * 24)))} days. ')
 
     else:
         await giveWeekly(ctx)
@@ -211,7 +211,7 @@ async def weekly(ctx):
 async def crates(ctx):
     await createAccount(ctx)
     value = db.fetch_data(ctx.author.id, 'crates')
-    await ctx.send('You have: {0}'.format(value) + ' crates')
+    await ctx.send(f'You have: {value}' + ' crates')
 
 
 @cogFighter.command()
@@ -247,7 +247,8 @@ async def racegame(ctx):
             await ctx.send('must be an integer')
             continue
 
-        await ctx.send('racer 1 chose {0}, racer 2 chose {1}, racer 3 chose {2} and racer 4 chose {3}'.format(bot1num, bot2num, bot3num, bot4num))
+        await ctx.send(
+            f'racer 1 chose {bot1num}, racer 2 chose {bot2num}, racer 3 chose {bot3num} and racer 4 chose {bot4num}')
         if bot1num != bot2num and bot1num != bot3num and bot1num != bot4num and bot1num != numchosen:
             bot1total += bot1num
 
@@ -262,7 +263,8 @@ async def racegame(ctx):
 
         if numchosen != bot2num and numchosen != bot1num and numchosen != bot4num and numchosen != bot3num:
             usertotal += numchosen
-        await ctx.send('Racer 1 has {0} total, racer 2 has {1} total, racer 3 has {2} total, racer 4 has {3} total and you have {4} total.'.format(bot1total, bot2total, bot3total, bot4total, usertotal))
+        await ctx.send(
+            f'Racer 1 has {bot1total} total, racer 2 has {bot2total} total, racer 3 has {bot3total} total, racer 4 has {bot4total} total and you have {usertotal} total.')
         if bot1total >= numberToWin:
             await ctx.send('Better luck next time bot 1 has won.')
             break
@@ -277,7 +279,7 @@ async def racegame(ctx):
             break
         if usertotal >= numberToWin:
             await ctx.send('You won ! Congrats!')
-            await ctx.send('You won {0} jellybeans.'.format(prize))
+            await ctx.send(f'You won {prize} jellybeans.')
             db.add_balance(ctx.author.id, prize)
             break
 
@@ -308,7 +310,7 @@ async def flipcoin(ctx, arg=None, arg2=1):
         await ctx.send(f"Congrats! It landed on {result}, you earned {int(arg2) * 2} jellybeans!")
         db.add_balance(ctx.author.id, int(arg2)*2)
     else:
-        await ctx.send('RIP. It landed on {0}'.format(result))
+        await ctx.send(f'RIP. It landed on {result}')
 
 
 # @cogFighter.event
@@ -326,7 +328,7 @@ cogs = [
     # "cogs.modcommands",
 ]
 for cog in cogs:
-    print('loading cog: {0}'.format(cog))
+    print(f'loading cog: {cog}')
     cogFighter.load_extension(cog)
 
 if __name__ == "__main__":
