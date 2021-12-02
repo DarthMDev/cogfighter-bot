@@ -15,32 +15,23 @@ class Shop(commands.Cog):
     async def shop(self, ctx):
         message = "List of shop items:"
         message += "\n"
-        for x in self.getItems():
+        for x in self.items:
             index = self.getIndexofItem(x)
-            message += "{0} {1} : {2} jellybeans \n".format(self.getEmojiofItem(index), x, self.getPriceofItem(index))
+            message += f"{self.emojis[index]} {x} : {self.getPriceofItem(index)} jellybeans \n"
         await ctx.send(message)
-
-    def getEmojiofItem(self, index):
-        return self.getEmojis()[index]
-
-    def getEmojis(self):
-        return self.emojis
-
-    def setEmojis(self, emojis):
-        self.emojis = emojis
 
     def getIndexofItem(self, item):
         """
         Gets the index of an item using the list of items in the shop
         """
-        index = self.getItems().index(item)
+        index = self.items.index(item)
         return int(index)
 
     def getPriceofItem(self, index):
         """
         Gets the price of an item using the index provided
         """
-        return self.getPrices()[index]
+        return self.prices[index]
 
     @commands.command(aliases=['purchase'], pass_context=True)
     async def buy(self, ctx, *args):
@@ -65,31 +56,6 @@ class Shop(commands.Cog):
             db.sub_balance(ctx.author.id, price)
             await ctx.send(f"Successfully purchased {str(item.title())} for {str(price)} jellybeans.")
             return
-
-    def setItems(self, items):
-        """
-        Sets the list of items in the shop 
-        """
-        self.items = items
-
-    def getItems(self):
-        """
-        Gets the list of items in the shop
-        """
-        return self.items
-
-    def setPrices(self, prices):
-        """
-        Sets the list of prices in the shop, 
-        the indexes should correspond with that of items
-        """
-        self.prices = prices
-
-    def getPrices(self):
-        """
-        Gets the list of prices in the shop
-        """
-        return self.prices
 
 
 def setup(bot):
