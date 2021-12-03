@@ -22,6 +22,12 @@ gagEmos = ['<:cupcake:914821822875316224>', '<:fruitpieslice:914821822812409898>
 gags = ['Cupcake', 'Fruit Pie Slice', 'Cream Pie Slice', 'Fruit Pie', 'Cream Pie', 'Birthday Cake', 'Wedding Cake']
 
 
+def embedMsg(ctx, msg, title=''):
+    emb = discord.Embed(title = title, description= msg)
+    emb.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}', icon_url=ctx.author.avatar_url)
+    return emb
+
+
 def cdf(weights):
     total = sum(weights)
     result = []
@@ -55,27 +61,30 @@ async def startGuessNumber(ctx):
 
 
 @cogFighter.command(aliases=['givemecrates', 'gibc', 'givecrates'])
-async def giveMeCrates(ctx, num):
+async def giveMeCrates(ctx, num=100):
     await createAccount(ctx)
     db.add_crates(ctx.author.id, int(num))
-    await ctx.send(f"There's {num} crates...")
+    await ctx.send(embed=embedMsg(ctx, msg = f"There's {num} crates..."))
 
 
 @cogFighter.command(aliases=['gibj','givemejb','givejb'])
-async def giveMeJB(ctx, num):
+async def giveMeJB(ctx, num=1000):
     db.add_balance(ctx.author.id, int(num))
-    await ctx.send(f"{num} jellybeans have been added!")
+    await ctx.send(embed=embedMsg(ctx, msg=f"{num} jellybeans have been added!", title=''))
 
 
 @cogFighter.command(aliases=['setbal','setbalance','set'])
 async def setjbBalance(ctx, num):
     db.set_value(ctx.author.id, 'balance', int(num))
-    await ctx.send(f"balance has been set to {num}")
+    await ctx.send(embed=embedMsg(ctx, msg=f"balance has been set to {num}", title=''))
 
 
 @cogFighter.command(aliases=['opencrates', 'oc'])
 async def opencrate(ctx, arg=1):
     await createAccount(ctx)
+    if arg < 0:
+        await ctx.send(embed=embedMsg(ctx, "Cannot open a negative amount of crates."))
+        return
 
     inv = db.fetch_data(ctx.author.id, 'inventory')
 
@@ -92,33 +101,34 @@ async def opencrate(ctx, arg=1):
             counts.append(results.count(gags[i]))
 
         # display gags the user just recieved
-        message = f"You opened {str(arg)} crate(s) and recieved:"
+        title = f"You opened {str(arg)} crate and recieved:" if arg == 1 else f"You opened {str(arg)} crates and recieved:"
+        message = ""
         for i in range(len(gags)):
             if counts[i] > 0:
-                message += f"\n{gagEmos[i]} {gags[i]} x{counts[i]}"
+                message += f"{gagEmos[i]} {gags[i]} x{counts[i]}\n"
 
         inv = [counts[i] + int(inv[i]) for i in range(len(counts))]
 
-        await ctx.send(message)
+        await ctx.send(embed=embedMsg(ctx, message, title))
 
         db.sub_crates(ctx.author.id, arg)
         db.set_value(ctx.author.id, 'inventory', inv)
 
     else:
-        await ctx.send(f'You only have {str(db.fetch_data(ctx.author.id, "crates"))} crates.')
+        await ctx.send(embed=embedMsg(ctx, msg=f'You only have {str(db.fetch_data(ctx.author.id, "crates"))} crates.', title=''))
 
 
 @cogFighter.command()
 async def deleteinventory(ctx):
     await createAccount(ctx)
     db.set_value(ctx.author.id, 'inventory', [0, 0, 0, 0, 0, 0, 0])
-    await ctx.send('Inventory deleted.')
+    await ctx.send(embed=embedMsg(ctx, msg='Inventory deleted.', title=''))
 
 
 async def createAccount(ctx):
     if not db.does_user_exist(ctx.author.id):
         db.create_user(ctx.author.id)
-        await ctx.send("Account Created!")
+        await ctx.send(embed=embedMsg(ctx, msg="Account Created!", title=''))
 
 
 @cogFighter.command(aliases=['inv', 'gags'])
@@ -126,25 +136,32 @@ async def inventory(ctx):
     await createAccount(ctx)
 
     inv = (db.fetch_data(ctx.author.id, 'inventory'))
-    message = f"{ctx.author.name}#{ctx.author.discriminator}'s Inventory:"
+    title = f"{ctx.author.name}#{ctx.author.discriminator}'s Inventory:"
+    message = ''
     for i in range(len(gags)):
         # If the user has an amount of 0 for a  gag in the list of gags it will not show.
-        if inv[i] > 0: message += f"\n{gagEmos[i]} {gags[i]} x{inv[i]}"
+        if inv[i] > 0: message += f"{gagEmos[i]} {gags[i]} x{inv[i]}\n"
 
-    await ctx.send(message)
+    await ctx.send(embed=embedMsg(ctx, msg=message, title=title))
 
 
 @cogFighter.command()
 async def setupaccount(ctx):
+    if db.does_user_exist(ctx.author.id):
+        await ctx.send(embed=embedMsg(ctx, msg='You already have an account.'))
+        return
     db.create_user(ctx.author.id)
-    await ctx.send('Account created!')
+    await ctx.send(embed=embedMsg(ctx, msg='Account created!', title=''))
 
 
 #When finalizing this command, add a double check to ensure the user means to delete their account.
 @cogFighter.command()
 async def deleteaccount(ctx):
+    if not db.does_user_exist(ctx.author.id):
+        await ctx.send(embed=embedMsg(ctx, msg="No account found"))
+        return
     db.remove_user(ctx.author.id)
-    await ctx.send('Your account is now deleted.')
+    await ctx.send(embed=embedMsg(ctx, msg='Your account is now deleted.', title=''))
 
 """
 @cogFighter.command()
@@ -160,7 +177,7 @@ async def givecrates(ctx, member: discord.Member = None, arg2=1):
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
 async def getbalance(ctx):
     await createAccount(ctx)
-    await ctx.send(f'You have: {db.fetch_data(ctx.author.id, "balance")}' + ' jellybeans')
+    await ctx.send(embed=embedMsg(ctx, msg=f'You have: {db.fetch_data(ctx.author.id, "balance")}' + ' jellybeans', title=''))
 
 
 @cogFighter.command()
@@ -175,9 +192,9 @@ async def daily(ctx):
         if (timeSinceLastClaimed / 3600) >= hourWait:
             db.add_crates(ctx.author.id, 1)
             db.set_value(ctx.author.id, 'dailycooldown', time.time())
-            await ctx.send("Daily reawrd claimed!")
+            await ctx.send(embed=embedMsg(ctx, msg="Daily reawrd claimed!", title=''))
         else:
-            await ctx.send(f'You have to wait {round(hourWait - (timeSinceLastClaimed / 3600))} hours. ')
+            await ctx.send(embed=embedMsg(ctx, msg=f'You have to wait {round(hourWait - (timeSinceLastClaimed / 3600))} hours. ', title=''))
 
     else:
         return
@@ -186,7 +203,7 @@ async def daily(ctx):
 async def giveWeekly(ctx):
     db.add_crates(ctx.author.id, 3)
     db.add_balance(ctx.author.id, 5)
-    await ctx.send("Weekly reward claimed!")
+    await ctx.send(embed=embedMsg(ctx, msg="Weekly reward claimed!", title=''))
 
     db.set_value(ctx.author.id, 'weeklycooldown', time.time())
 
@@ -201,7 +218,7 @@ async def weekly(ctx):
         if (timeSinceLastClaimed / (60 * 60 * 24)) >= 7:
             await giveWeekly(ctx)
         else:
-            await ctx.send(f'You have to wait {round(7 - (timeSinceLastClaimed / (60 * 60 * 24)))} days. ')
+            await ctx.send(embed=embedMsg(ctx, msg=f'You have to wait {round(7 - (timeSinceLastClaimed / (60 * 60 * 24)))} days. ', title=''))
 
     else:
         await giveWeekly(ctx)
@@ -211,7 +228,7 @@ async def weekly(ctx):
 async def crates(ctx):
     await createAccount(ctx)
     value = db.fetch_data(ctx.author.id, 'crates')
-    await ctx.send(f'You have: {value}' + ' crates')
+    await ctx.send(embed=embedMsg(ctx, msg=f'You have: {value}' + ' crates', title=''))
 
 
 @cogFighter.command()
@@ -289,15 +306,15 @@ async def racegame(ctx):
 async def flipcoin(ctx, arg=None, arg2=1):
     await createAccount(ctx)
     if not arg:
-        await ctx.send("No arguments provided")
+        await ctx.send(embed=embedMsg(ctx, msg="No arguments provided", title='Flipcoin'))
     if arg.lower() == 'heads' or arg.lower() == 'tails':
         if db.bal(ctx.author.id) >= int(arg2):
             db.sub_balance(ctx.author.id, arg2)
         else:
-            await ctx.send('You do not have enough jellybeans.')
+            await ctx.send(embed=embedMsg(ctx, msg='You do not have enough jellybeans.', title='Flipcoin'))
             return
     else:
-        await ctx.send('Must supply tails or heads')
+        await ctx.send(embed=embedMsg(ctx, msg='Must supply tails or heads', title='Flipcoin'))
         flipcoin.reset_cooldown(ctx)
         return
 
@@ -307,16 +324,16 @@ async def flipcoin(ctx, arg=None, arg2=1):
     elif rand == 2:
         result = 'tails'
     if arg.lower() == result:
-        await ctx.send(f"Congrats! It landed on {result}, you earned {int(arg2) * 2} jellybeans!")
+        await ctx.send(embed=embedMsg(ctx, msg=f"Congrats! It landed on {result}, you earned {int(arg2) * 2} jellybeans!", title='Flipcoin'))
         db.add_balance(ctx.author.id, int(arg2)*2)
     else:
-        await ctx.send(f'RIP. It landed on {result}')
+        await ctx.send(embed=embedMsg(ctx, msg=f'RIP. It landed on {result}', title='Flipcoin'))
 
 
 # @cogFighter.event
 # async def on_command_error(ctx, error):
 # 	if isinstance(error, commands.CommandOnCooldown):
-# 		em = discord.Embed(title=f"{ctx.author.name}#{ctx.author.discriminator}", description="Try again in {0}".format(round(error.retry_after)) + "s.")
+# 		em = discord.Embed(title=f"{ctx.author.name}#{ctx.author.discriminator}", description=f"Try again in {round(error.retry_after)}" + "s.")
 # 		await ctx.send(embed=em)
 
 
