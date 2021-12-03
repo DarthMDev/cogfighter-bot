@@ -12,7 +12,7 @@ class Shop(commands.Cog):
 
     @commands.command(aliases=['gagshop', 'store'])
     async def shop(self, ctx):
-        title = "The Gag Shop"
+        title = "Shop"
         message = "List of shop items:"
         message += "\n"
         for x in self.items:
