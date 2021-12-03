@@ -1,8 +1,11 @@
 import discord
 from discord.ext import commands
 import sqliteFuncs as db
-from bot import embedMsg, GAGS, GAG_EMOS, PRICES
+from bot import embedMsg, GAGS, GAG_EMOS
+PRICES = [10, 20, 30, 40, 50, 60, 70]
+
 class Shop(commands.Cog):
+
     def __init__(self, bot):
         # initial variables
         self.bot = bot
