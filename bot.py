@@ -16,11 +16,12 @@ with open('config/config.json') as file:
 
 TOKEN = conf.get('token')
 PREFIX = conf.get('prefix')
+
 cogFighter = commands.Bot(command_prefix=PREFIX)
 
-gagEmos = ['<:cupcake:914821822875316224>', '<:fruitpieslice:914821822812409898>', '<:creampieslice:914821822598512702>', '<:fruitpie:914821822875320330>', '<:creampie:914821822229405726>', '<:bday:914821822715936788>', '<:wedding:914821822632067152>']
-gags = ['Cupcake', 'Fruit Pie Slice', 'Cream Pie Slice', 'Fruit Pie', 'Cream Pie', 'Birthday Cake', 'Wedding Cake']
-
+GAG_EMOS = ['<:cupcake:914821822875316224>', '<:fruitpieslice:914821822812409898>', '<:creampieslice:914821822598512702>', '<:fruitpie:914821822875320330>', '<:creampie:914821822229405726>', '<:bday:914821822715936788>', '<:wedding:914821822632067152>']
+GAGS = ['Cupcake', 'Fruit Pie Slice', 'Cream Pie Slice', 'Fruit Pie', 'Cream Pie', 'Birthday Cake', 'Wedding Cake']
+PRICES = [10, 20, 30, 40, 50, 60, 70]
 
 def embedMsg(ctx, msg, title=''):
     emb = discord.Embed(title = title, description= msg)
@@ -85,7 +86,10 @@ async def opencrate(ctx, arg=1):
     if arg < 0:
         await ctx.send(embed=embedMsg(ctx, "Cannot open a negative amount of crates."))
         return
-
+    elif arg > 1000000:
+        #Prevent overloading the bot
+        await ctx.send(embed=embedMsg(ctx, 'You are opening too many crates at once. Please try again with a smaller number.'))
+        return
     inv = db.fetch_data(ctx.author.id, 'inventory')
 
     if db.fetch_data(ctx.author.id, crates) >= arg:
@@ -93,19 +97,22 @@ async def opencrate(ctx, arg=1):
         counts = []
         for i in range(0, arg):
             
-            result = choice(gags, [0.20, 0.19, 0.18, 0.16, 0.14, 0.09, 0.04])
+            result = choice(GAGS, [0.20, 0.19, 0.18, 0.16, 0.14, 0.09, 0.04])
             results.append(result)
 
-        for i in range(len(gags)):
+        for i in range(len(GAGS)):
 
-            counts.append(results.count(gags[i]))
+            counts.append(results.count(GAGS[i]))
 
         # display gags the user just recieved
-        title = f"You opened {str(arg)} crate and recieved:" if arg == 1 else f"You opened {str(arg)} crates and recieved:"
+        if arg == 1:
+            title = f"You opened {str(arg)} crate and recieved:"
+        else:
+             title = f"You opened {str(arg)} crates and recieved:"
         message = ""
-        for i in range(len(gags)):
+        for i in range(len(GAGS)):
             if counts[i] > 0:
-                message += f"{gagEmos[i]} {gags[i]} - {counts[i]}\n"
+                message += f"{GAG_EMOS[i]} {GAGS[i]} - {counts[i]}\n"
 
         inv = [counts[i] + int(inv[i]) for i in range(len(counts))]
 
@@ -138,9 +145,9 @@ async def inventory(ctx):
     inv = (db.fetch_data(ctx.author.id, 'inventory'))
     title = f"{ctx.author.name}#{ctx.author.discriminator}'s Inventory:"
     message = ''
-    for i in range(len(gags)):
+    for i in range(len(GAGS)):
         # If the user has an amount of 0 for a  gag in the list of gags it will not show.
-        if inv[i] > 0: message += f"{gagEmos[i]} {gags[i]} x{inv[i]}\n"
+        if inv[i] > 0: message += f"{GAG_EMOS[i]} {GAGS[i]} x{inv[i]}\n"
 
     await ctx.send(embed=embedMsg(ctx, msg=message, title=title))
 
