@@ -6,7 +6,7 @@ import random
 import time
 from discord.ext.tasks import loop
 import asyncio
-import sqliteFuncs as db
+import sqlite_funcs as db
 from threading import Thread
 with open('config/config.json') as file:
 	conf = json.load(file)      

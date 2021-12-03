@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
-import sqliteFuncs as db
+import sqlite_funcs as db
 from bot import embedMsg
-from BotGlobals import *
+from bot_globals import *
 
 PRICES = [10, 20, 30, 40, 50, 60, 70]
 

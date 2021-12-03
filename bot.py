@@ -10,8 +10,8 @@ import time
 import random
 from collections import Counter
 import bisect
-import sqliteFuncs as db
-from BotGlobals import *
+import sqlite_funcs as db
+from bot_globals import *
 with open('config/config.json') as file:
     conf = json.load(file)
 
