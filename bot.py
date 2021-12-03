@@ -93,7 +93,7 @@ async def opencrate(ctx, arg=1):
         counts = []
         for i in range(0, arg):
             
-            result = choice(gags, [0.18, 0.18, 0.18, 0.13, 0.13, 0.118, 0.082])
+            result = choice(gags, [0.20, 0.19, 0.18, 0.16, 0.14, 0.09, 0.04])
             results.append(result)
 
         for i in range(len(gags)):
@@ -105,7 +105,7 @@ async def opencrate(ctx, arg=1):
         message = ""
         for i in range(len(gags)):
             if counts[i] > 0:
-                message += f"{gagEmos[i]} {gags[i]} x{counts[i]}\n"
+                message += f"{gagEmos[i]} {gags[i]} - {counts[i]}\n"
 
         inv = [counts[i] + int(inv[i]) for i in range(len(counts))]
 
@@ -192,7 +192,7 @@ async def daily(ctx):
         if (timeSinceLastClaimed / 3600) >= hourWait:
             db.add_crates(ctx.author.id, 1)
             db.set_value(ctx.author.id, 'dailycooldown', time.time())
-            await ctx.send(embed=embedMsg(ctx, msg="Daily reawrd claimed!", title=''))
+            await ctx.send(embed=embedMsg(ctx, msg="Daily reward claimed!", title=''))
         else:
             await ctx.send(embed=embedMsg(ctx, msg=f'You have to wait {round(hourWait - (timeSinceLastClaimed / 3600))} hours. ', title=''))
 
@@ -224,7 +224,7 @@ async def weekly(ctx):
         await giveWeekly(ctx)
 
 
-@cogFighter.command()
+@cogFighter.command(aliases=['c', 'crate'])
 async def crates(ctx):
     await createAccount(ctx)
     value = db.fetch_data(ctx.author.id, 'crates')
