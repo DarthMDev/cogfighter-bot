@@ -22,15 +22,6 @@ cogFighter = commands.Bot(command_prefix=PREFIX)
 
 
 
-
-def embedMsg(ctx, msg, title='', url='', image=''):
-    emb = discord.Embed(title = title, url=url, description= msg)
-    emb.set_image(url=image)
-    emb.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}', icon_url=ctx.author.avatar_url)
-    
-    return emb
-
-
 def cdf(weights):
     total = sum(weights)
     result = []
@@ -67,7 +58,7 @@ async def startGuessNumber(ctx):
 async def giveMeCrates(ctx, num=100):
     await createAccount(ctx)
     db.add_crates(ctx.author.id, int(num))
-    await ctx.send(embed=embedMsg(ctx, msg = f"There's {num} crates..."))
+    await ctx.send(embed=embedMsg(ctx, msg=f"There's {num} crates..."))
 
 
 @cogFighter.command(aliases=['gibj','givemejb','givejb'])
@@ -90,7 +81,8 @@ async def opencrate(ctx, arg=1):
         return
     elif arg > 1000000:
         #Prevent overloading the bot
-        await ctx.send(embed=embedMsg(ctx, 'You are opening too many crates at once. Please try again with a smaller number.'))
+        await ctx.send(embed=embedMsg(ctx,
+                                      'You are opening too many crates at once. Please try again with a smaller number.'))
         return
     inv = db.fetch_data(ctx.author.id, 'inventory')
 
@@ -124,7 +116,8 @@ async def opencrate(ctx, arg=1):
         db.set_value(ctx.author.id, 'inventory', inv)
 
     else:
-        await ctx.send(embed=embedMsg(ctx, msg=f'You only have {str(db.fetch_data(ctx.author.id, "crates"))} crates.', title=''))
+        await ctx.send(embed=embedMsg(ctx, msg=f'You only have {str(db.fetch_data(ctx.author.id, "crates"))} crates.',
+                                      title=''))
 
 
 @cogFighter.command()
@@ -186,7 +179,8 @@ async def givecrates(ctx, member: discord.Member = None, arg2=1):
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
 async def getbalance(ctx):
     await createAccount(ctx)
-    await ctx.send(embed=embedMsg(ctx, msg=f'You have: {db.fetch_data(ctx.author.id, "balance")}' + ' jellybeans', title=''))
+    await ctx.send(embed=embedMsg(ctx, msg=f'You have: {db.fetch_data(ctx.author.id, "balance")}' + ' jellybeans',
+                                  title=''))
 
 
 @cogFighter.command()
@@ -203,7 +197,9 @@ async def daily(ctx):
             db.set_value(ctx.author.id, 'dailycooldown', time.time())
             await ctx.send(embed=embedMsg(ctx, msg="Daily reward claimed!", title=''))
         else:
-            await ctx.send(embed=embedMsg(ctx, msg=f'You have to wait {round(hourWait - (timeSinceLastClaimed / 3600))} hours. ', title=''))
+            await ctx.send(embed=embedMsg(ctx,
+                                          msg=f'You have to wait {round(hourWait - (timeSinceLastClaimed / 3600))} hours. ',
+                                          title=''))
 
     else:
         return
@@ -227,7 +223,9 @@ async def weekly(ctx):
         if (timeSinceLastClaimed / (60 * 60 * 24)) >= 7:
             await giveWeekly(ctx)
         else:
-            await ctx.send(embed=embedMsg(ctx, msg=f'You have to wait {round(7 - (timeSinceLastClaimed / (60 * 60 * 24)))} days. ', title=''))
+            await ctx.send(embed=embedMsg(ctx,
+                                          msg=f'You have to wait {round(7 - (timeSinceLastClaimed / (60 * 60 * 24)))} days. ',
+                                          title=''))
 
     else:
         await giveWeekly(ctx)
@@ -333,7 +331,9 @@ async def flipcoin(ctx, arg=None, arg2=1):
     elif rand == 2:
         result = 'tails'
     if arg.lower() == result:
-        await ctx.send(embed=embedMsg(ctx, msg=f"Congrats! It landed on {result}, you earned {int(arg2) * 2} jellybeans!", title='Flipcoin'))
+        await ctx.send(embed=embedMsg(ctx,
+                                      msg=f"Congrats! It landed on {result}, you earned {int(arg2) * 2} jellybeans!",
+                                      title='Flipcoin'))
         db.add_balance(ctx.author.id, int(arg2)*2)
     else:
         await ctx.send(embed=embedMsg(ctx, msg=f'RIP. It landed on {result}', title='Flipcoin'))

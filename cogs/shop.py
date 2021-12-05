@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands
-import sqlite_funcs as db
-from bot import embedMsg
-from bot_globals import *
+import cogFighter.sqlite_funcs as db
+from cogFighter.bot_globals import *
 
 PRICES = [10, 20, 30, 40, 50, 60, 70]
 
@@ -22,7 +21,7 @@ class Shop(commands.Cog):
         for x in self.items:
             index = self.getIndexofItem(x)
             message += f"\n{self.emojis[index]} {x} : {self.getPriceofItem(index)} jellybeans"
-        await ctx.send(embed=embedMsg(ctx,msg=message, title=title))
+        await ctx.send(embed=embedMsg(ctx, msg=message, title=title))
 
 
     def getIndexofItem(self, item):
@@ -52,7 +51,7 @@ class Shop(commands.Cog):
             price = self.getPriceofItem(indexNumber)
         except ValueError:
             title = "Error"
-            await ctx.send(embed=embedMsg(ctx,msg="Item does not exist in shop!", title=title))
+            await ctx.send(embed=embedMsg(ctx, msg="Item does not exist in shop!", title=title))
             return
         if db.fetch_data(ctx.author.id, 'balance') < price:
             title = 'Error'
@@ -62,7 +61,9 @@ class Shop(commands.Cog):
             db.add_item(ctx.author.id, item.title())
             title = 'Success'
             db.sub_balance(ctx.author.id, price)
-            await ctx.send(embed=embedMsg(ctx, msg=f"Successfully purchased {str(item.title())} for {str(price)} jellybeans.", title=title))
+            await ctx.send(embed=embedMsg(ctx,
+                                          msg=f"Successfully purchased {str(item.title())} for {str(price)} jellybeans.",
+                                          title=title))
             return
 
 
