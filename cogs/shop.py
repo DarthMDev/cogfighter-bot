@@ -19,10 +19,9 @@ class Shop(commands.Cog):
     async def shop(self, ctx):
         title = "Shop"
         message = "List of shop items:"
-        message += "\n"
         for x in self.items:
             index = self.getIndexofItem(x)
-            message += f"{self.emojis[index]} {x} : {self.getPriceofItem(index)} jellybeans \n"
+            message += f"\n{self.emojis[index]} {x} : {self.getPriceofItem(index)} jellybeans"
         await ctx.send(embed=embedMsg(ctx,msg=message, title=title))
 
 
