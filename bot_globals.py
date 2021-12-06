@@ -1,4 +1,7 @@
 import discord
+from discord.ext import commands
+import sqlite_funcs as db
+import json
 
 # Global Variables
 # Gag constants
@@ -10,9 +13,22 @@ THROW_DAMAGES = [5, 15, 25 , 50, 75, 115, 165, 225, 295, 375]
 
 # Cog constants
 
-#Global Functions
+#Bot Variables
+with open('config/config.json') as file:
+    conf = json.load(file)
+PREFIX = conf.get('prefix')
+TOKEN = conf.get('token')
+cogFighter = commands.Bot(command_prefix=PREFIX)
+
+
+# Global Functions
 def embedMsg(ctx, msg, title='', url='', image=''):
     emb = discord.Embed(title = title, url=url, description= msg)
     emb.set_image(url=image)
     emb.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}', icon_url=ctx.author.avatar_url)
     return emb
+
+async def createAccount(ctx):
+    if not db.does_user_exist(ctx.author.id):
+        db.create_user(ctx.author.id)
+        await ctx.send(embed=embedMsg(ctx, msg="Account Created!", title=''))
