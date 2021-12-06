@@ -40,18 +40,19 @@ async def deleteaccount(ctx):
         await ctx.send(embed=embedMsg(ctx, msg="No account found"))
         return
     message = await ctx.send(
-        embed=embedMsg(ctx, "Are you sure you want to delete your account?\nReact with ❌ to delete "
-                            "your account. (You can create a new one)"))
+        embed=embedMsg(ctx, "Are you sure you want to delete your account?\nReact with ✅ to delete "
+                            "your account. React with ❌ to cancel. (You can create a new one)"))
+    await message.add_reaction("✅")
     await message.add_reaction("❌")
-
     @cogFighter.event
     async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
         if payload.member == cogFighter.user:
             return
-        if payload.emoji.name == "❌" and ctx.author == payload.member and message.id == payload.message_id:
+        if payload.emoji.name == "✅" and ctx.author == payload.member and message.id == payload.message_id:
             db.remove_user(ctx.author.id)
             await message.edit(embed=embedMsg(ctx, "Account deleted."))
-
+        elif payload.emoji.name == "❌" and ctx.author == payload.member and message.id == payload.message_id:
+            await message.edit(embed=embedMsg(ctx, 'Action canceled'))
 
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
 async def getbalance(ctx):

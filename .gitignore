@@ -4,3 +4,4 @@ config/config.json
 cogs/__pycache__/games.cpython-38.pyc
 .idea
 users.db
+*.log
