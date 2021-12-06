@@ -106,6 +106,10 @@ async def opencrate(ctx, arg=1):
             counts.append(results.count(GAGS[i]))
 
         # display gags the user just received
+        # if argument is the number 1 display the phrase
+        # "You opened (number here) crate and received (list of items here)
+        # else display the message 
+        # "You opened (number here) crates and received (list of items here)
         title = f"You opened {str(arg)} crate{'' if arg == 1 else 's'} and received:"
         message = ""
         for i in range(len(GAGS)):
