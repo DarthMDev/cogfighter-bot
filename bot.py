@@ -89,8 +89,6 @@ async def weekly(ctx):
         await giveWeekly(ctx)
 
 
-
-
 @cogFighter.command()
 async def racegame(ctx):
     await createAccount(ctx)
@@ -105,7 +103,6 @@ async def racegame(ctx):
 
     def pred():
         return True
-
 
     while True:
         bot1num = random.randint(1, 4)
@@ -187,7 +184,7 @@ async def flipcoin(ctx, arg=None, arg2=1):
         await ctx.send(embed=embedMsg(ctx,
                                       msg=f"Congrats! It landed on {result}, you earned {int(arg2) * 2} jellybeans!",
                                       title='Flipcoin'))
-        db.add_balance(ctx.author.id, int(arg2)*2)
+        db.add_balance(ctx.author.id, int(arg2) * 2)
     else:
         await ctx.send(embed=embedMsg(ctx, msg=f'RIP. It landed on {result}', title='Flipcoin'))
 
@@ -197,7 +194,6 @@ async def flipcoin(ctx, arg=None, arg2=1):
 # 	if isinstance(error, commands.CommandOnCooldown):
 # 		em = discord.Embed(title=f"{ctx.author.name}#{ctx.author.discriminator}", description=f"Try again in {round(error.retry_after)}" + "s.")
 # 		await ctx.send(embed=em)
-
 
 
 cogs = [

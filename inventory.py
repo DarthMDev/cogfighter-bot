@@ -39,8 +39,18 @@ async def deleteaccount(ctx):
     if not db.does_user_exist(ctx.author.id):
         await ctx.send(embed=embedMsg(ctx, msg="No account found"))
         return
-    db.remove_user(ctx.author.id)
-    await ctx.send(embed=embedMsg(ctx, msg='Your account is now deleted.', title=''))
+    message = await ctx.send(
+        embed=embedMsg(ctx, "Are you sure you want to delete your account?\nReact with ❌ to delete "
+                            "your account. (You can create a new one)"))
+    await message.add_reaction("❌")
+
+    @cogFighter.event
+    async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
+        if payload.member == cogFighter.user:
+            return
+        if payload.emoji.name == "❌" and ctx.author == payload.member and message.id == payload.message_id:
+            db.remove_user(ctx.author.id)
+            await message.edit(embed=embedMsg(ctx, "Account deleted."))
 
 
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
@@ -95,11 +105,8 @@ async def opencrate(ctx, arg=1):
         for i in range(len(GAGS)):
             counts.append(results.count(GAGS[i]))
 
-        # display gags the user just recieved
-        if arg == 1:
-            title = f"You opened {str(arg)} crate and recieved:"
-        else:
-            title = f"You opened {str(arg)} crates and recieved:"
+        # display gags the user just received
+        title = f"You opened {str(arg)} crate{'' if arg == 1 else 's'} and received:"
         message = ""
         for i in range(len(GAGS)):
             if counts[i] > 0:

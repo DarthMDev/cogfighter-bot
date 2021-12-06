@@ -1,7 +1,4 @@
-import discord
-from discord.ext import commands
-import cogFighter.sqlite_funcs as db
-from cogFighter.bot_globals import *
+from bot_globals import *
 
 PRICES = [10, 20, 30, 40, 50, 60, 70]
 
