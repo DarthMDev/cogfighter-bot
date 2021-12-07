@@ -36,11 +36,12 @@ async def createaccount(ctx):
 @cogFighter.command()
 async def deleteaccount(ctx):
     if not db.does_user_exist(ctx.author.id):
-        await ctx.send(embed=embedMsg(ctx, msg="No account found"))
+        await ctx.send(embed=embedMsg(ctx, msg="No account found", title="Account Deletion"))
         return
     message = await ctx.send(
         embed=embedMsg(ctx, "Are you sure you want to delete your account?\nReact with ✅ to delete "
-                            "your account. React with ❌ to cancel. (You can create a new one)"))
+                            "your account. React with ❌ to cancel. (You can create a new one)",
+                            title="Account Deletion"))
     await message.add_reaction("✅")
     await message.add_reaction("❌")
     @cogFighter.event
@@ -48,12 +49,12 @@ async def deleteaccount(ctx):
         if payload.member == cogFighter.user:
             return
         if payload.emoji.name == "✅" and ctx.author == payload.member and message.id == payload.message_id:
-            await message.clear_reactions()
+            await message.delete()
             db.remove_user(ctx.author.id)
-            await message.edit(embed=embedMsg(ctx, "Account deleted."))
+            await ctx.send(embed=embedMsg(ctx, '', title="Your account has been deleted."))
         elif payload.emoji.name == "❌" and ctx.author == payload.member and message.id == payload.message_id:
-            await message.clear_reactions()
-            await message.edit(embed=embedMsg(ctx, 'Action canceled'))
+            await message.delete()
+            await ctx.send(embed=embedMsg(ctx, '', title="Account deletion cancelled."))
 
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
 async def getbalance(ctx):
