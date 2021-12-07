@@ -33,7 +33,6 @@ async def createaccount(ctx):
     db.create_user(ctx.author.id)
     await ctx.send(embed=embedMsg(ctx, msg='Account created!', title=''))
 
-
 @cogFighter.command()
 async def deleteaccount(ctx):
     if not db.does_user_exist(ctx.author.id):
@@ -49,9 +48,11 @@ async def deleteaccount(ctx):
         if payload.member == cogFighter.user:
             return
         if payload.emoji.name == "✅" and ctx.author == payload.member and message.id == payload.message_id:
+            await message.clear_reactions()
             db.remove_user(ctx.author.id)
             await message.edit(embed=embedMsg(ctx, "Account deleted."))
         elif payload.emoji.name == "❌" and ctx.author == payload.member and message.id == payload.message_id:
+            await message.clear_reactions()
             await message.edit(embed=embedMsg(ctx, 'Action canceled'))
 
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
