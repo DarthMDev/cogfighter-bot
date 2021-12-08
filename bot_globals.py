@@ -22,10 +22,10 @@ cogFighter = commands.Bot(command_prefix=PREFIX)
 
 
 # Global Functions
-def embedMsg(ctx, msg, title='', url='', image=''):
+def embedMsg(ctx, msg='', title='', url='', image=''):
     emb = discord.Embed(title = title, url=url, description= msg)
     emb.set_image(url=image)
-    emb.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}', icon_url=ctx.author.avatar_url)
+    emb.set_author(name=f'{ctx.author.name}#{ctx.author.discriminator}', icon_url=ctx.author.avatar.url)
     return emb
 
 async def createAccount(ctx):
