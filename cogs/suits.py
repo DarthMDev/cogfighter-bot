@@ -19,7 +19,7 @@ class SuitFight(commands.Cog):
         self.channel = cogFighter.get_channel(813541240003887142)
 
     @commands.command()
-    async def startFight(self, ctx, level):
+    async def start_fight(self, ctx, level):
         self.suit = "Cold Caller"
         self.suitMaxHealth = (int(level) + 1) * (int(level) + 2) * 3
         self.suitHealth = self.suitMaxHealth
