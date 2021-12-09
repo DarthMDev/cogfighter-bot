@@ -52,6 +52,9 @@ class SuitFight(commands.Cog):
 
     @commands.command()
     async def gag(self, ctx, *, gag):
+        if ctx.channel != self.thread:
+            return
+
         if not db.does_user_exist(ctx.author.id):
             ctx.send(embed=embedMsg(ctx, msg="Heya! Looks like you're a new toon. Explore the bot in the other playing "
                                              "channels and gather some gags before you try to fight a cog!"))
@@ -87,6 +90,8 @@ class SuitFight(commands.Cog):
             players = ", ".join(players)
             reward = int(self.suitLevel)*20
             await self.channel.send(embed=discord.Embed(title=f"Cog defeated! {players} received {reward} Jellybeans!"))
+            for i in self.participants:
+                db.add_balance(i.id, reward)
 
         newEmbed = discord.Embed(title=f"A cog {self.suit} appeared!")
         newEmbed.set_image(url='https://cdn.discordapp.com/attachments/917177481847521300/917177636676059146/262.png')
