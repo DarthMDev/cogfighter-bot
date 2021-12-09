@@ -1,6 +1,5 @@
 import sys
 sys.path.append("..")
-from cogs import events
 from bot_globals import *
 
 
@@ -12,6 +11,7 @@ class SuitFight(commands.Cog):
         self.suitNames = SUIT_NAMES
         self.suit = ''
         self.suitHealth = 0
+        self.suitLevel = 0
         self.message = None
         self.thread = None
         self.suitMaxHealth = 0
@@ -37,7 +37,8 @@ class SuitFight(commands.Cog):
     @commands.command()
     async def startFight(self, ctx, level):
         self.suit = "Cold Caller"
-        self.suitMaxHealth = (int(level) + 1) * (int(level) + 2) * 3
+        self.suitLevel = int(level)
+        self.suitMaxHealth = (self.suitLevel + 1) * (self.suitLevel + 2) * 3
         self.suitHealth = self.suitMaxHealth
         self.channel = await discord.ext.commands.GuildChannelConverter().convert(ctx, '813541240003887142')
         cogEmbed = discord.Embed(title=f"A {self.suit} has appeared!")
@@ -84,7 +85,8 @@ class SuitFight(commands.Cog):
             for i in self.participants:
                 players.append(i.name)
             players = ", ".join(players)
-            await self.channel.send(embed=discord.Embed(title=f"Cog defeated! {players} received 100 Jellybeans!"))
+            reward = int(self.suitLevel)*20
+            await self.channel.send(embed=discord.Embed(title=f"Cog defeated! {players} received {reward} Jellybeans!"))
 
         newEmbed = discord.Embed(title=f"A cog {self.suit} appeared!")
         newEmbed.set_image(url='https://cdn.discordapp.com/attachments/917177481847521300/917177636676059146/262.png')
