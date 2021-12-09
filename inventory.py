@@ -13,7 +13,8 @@ async def inventory(ctx):
     message = ''
     for i in range(len(GAGS)):
         # If the user has an amount of 0 for a  gag in the list of gags it will not show.
-        if inv[i] > 0: message += f"{GAG_EMOS[i]} {GAGS[i]} x{inv[i]}\n"
+        if inv[i] > 0:
+            message += f"{GAG_EMOS[i]} {GAGS[i]} x{inv[i]}\n"
 
     await ctx.send(embed=embedMsg(ctx, msg=message, title=title))
 
@@ -33,6 +34,7 @@ async def createaccount(ctx):
     db.create_user(ctx.author.id)
     await ctx.send(embed=embedMsg(ctx, msg='Account created!', title=''))
 
+
 @cogFighter.command()
 async def deleteaccount(ctx):
     if not db.does_user_exist(ctx.author.id):
@@ -41,9 +43,10 @@ async def deleteaccount(ctx):
     message = await ctx.send(
         embed=embedMsg(ctx, "Are you sure you want to delete your account?\nReact with ✅ to delete "
                             "your account. React with ❌ to cancel. (You can create a new one)",
-                            title="Account Deletion"))
+                       title="Account Deletion"))
     await message.add_reaction("✅")
     await message.add_reaction("❌")
+
     @cogFighter.event
     async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
         if payload.member == cogFighter.user:
@@ -55,6 +58,7 @@ async def deleteaccount(ctx):
         elif payload.emoji.name == "❌" and ctx.author == payload.member and message.id == payload.message_id:
             await message.delete()
             await ctx.send(embed=embedMsg(ctx, '', title="Account deletion cancelled."))
+
 
 @cogFighter.command(aliases=['balance', 'bank', 'jar', 'bal'])
 async def getbalance(ctx):
