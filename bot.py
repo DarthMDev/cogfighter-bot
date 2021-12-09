@@ -186,7 +186,8 @@ async def flipcoin(ctx, arg=None, arg2=1):
 
 
 cogs = [
-    "cogs.shop"
+    "cogs.shop",
+    "cogs.suits"
     # "cogs.events",
     # "cogs.commands",
     # "cogs.modcommands",
