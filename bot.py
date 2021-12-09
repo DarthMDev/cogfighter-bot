@@ -1,3 +1,5 @@
+import sys
+sys.path.append(".")
 from events import event
 import time
 from inventory import *

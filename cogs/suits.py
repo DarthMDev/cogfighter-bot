@@ -1,5 +1,7 @@
-import cogFighter.cogs.events
-from cogFighter.bot_globals import *
+import sys
+sys.path.append("..")
+from cogs import events
+from bot_globals import *
 
 
 class SuitFight(commands.Cog):
