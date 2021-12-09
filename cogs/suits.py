@@ -1,5 +1,6 @@
 import sys
 sys.path.append("..")
+import random
 from bot_globals import *
 
 
@@ -36,13 +37,13 @@ class SuitFight(commands.Cog):
 
     @commands.command()
     async def startFight(self, ctx, level):
-        self.suit = "Cold Caller"
+        self.suit = SUIT_NAMES[random.randint(0, 7)]
         self.suitLevel = int(level)
         self.suitMaxHealth = (self.suitLevel + 1) * (self.suitLevel + 2) * 3
         self.suitHealth = self.suitMaxHealth
         self.channel = await discord.ext.commands.GuildChannelConverter().convert(ctx, '813541240003887142')
         cogEmbed = discord.Embed(title=f"A {self.suit} has appeared!")
-        cogEmbed.set_image(url='https://cdn.discordapp.com/attachments/917177481847521300/917177636676059146/262.png')
+        cogEmbed.set_image(url=SUIT_IMAGES[SUIT_NAMES.index(self.suit)])
         cogEmbed.add_field(name="Cog HP", value=f"{self.healthEmoji()} {self.suitHealth} out of {self.suitMaxHealth}")
         self.message = await self.channel.send(embed=cogEmbed)
         self.thread = await self.message.create_thread(name=f"{self.suit}")
@@ -94,7 +95,7 @@ class SuitFight(commands.Cog):
                 db.add_balance(i.id, reward)
 
         newEmbed = discord.Embed(title=f"A cog {self.suit} appeared!")
-        newEmbed.set_image(url='https://cdn.discordapp.com/attachments/917177481847521300/917177636676059146/262.png')
+        newEmbed.set_image(url=SUIT_IMAGES[SUIT_NAMES.index(self.suit)])
         newEmbed.add_field(name="Cog HP", value=f"{self.healthEmoji()} {self.suitHealth} out of {self.suitMaxHealth}")
         await self.message.edit(embed=newEmbed)
 
