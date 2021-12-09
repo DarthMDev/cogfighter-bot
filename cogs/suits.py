@@ -94,7 +94,7 @@ class SuitFight(commands.Cog):
             for i in self.participants:
                 db.add_balance(i.id, reward)
 
-        newEmbed = discord.Embed(title=f"A cog {self.suit} appeared!")
+        newEmbed = discord.Embed(title=f"A {self.suit} appeared!")
         newEmbed.set_image(url=SUIT_IMAGES[SUIT_NAMES.index(self.suit)])
         newEmbed.add_field(name="Cog HP", value=f"{self.healthEmoji()} {self.suitHealth}/{self.suitMaxHealth}")
         await self.message.edit(embed=newEmbed)
