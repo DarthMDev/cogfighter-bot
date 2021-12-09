@@ -22,7 +22,6 @@ class SuitFight(commands.Cog):
 
     def healthEmoji(self):
         ratio = self.suitHealth/self.suitMaxHealth
-        print(ratio)
         if ratio > 0.75:
             return "🟢"
         elif ratio > 0.5:
