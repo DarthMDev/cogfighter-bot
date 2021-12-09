@@ -1,16 +1,5 @@
-import discord
-from discord.ext import commands, tasks
-from discord.ext.tasks import loop
-import sqlite3
-from threading import Thread
-import os
 from events import event
 import time
-import random
-from collections import Counter
-import bisect
-import sqlite_funcs as db
-from bot_globals import *
 from inventory import *
 from testing_commands import *
 
@@ -38,7 +27,7 @@ async def givecrates(ctx, member: discord.Member = None, arg2=1):
         db['crates ' + member.name] = 0
     db['crates ' + member.name] += arg2
     await ctx.send(member.name + ' has been given ' + str(arg2) + ' crates.')
-"""
+    """
 
 
 @cogFighter.command()
