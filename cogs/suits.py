@@ -41,7 +41,7 @@ class SuitFight(commands.Cog):
         self.suitMaxHealth = (self.suitLevel + 1) * (self.suitLevel + 2) * 3
         self.suitHealth = self.suitMaxHealth
         self.channel = await discord.ext.commands.GuildChannelConverter().convert(ctx, '813541240003887142')
-        cogEmbed = discord.Embed(title=f"A {self.suit} has appeared!")
+        cogEmbed = discord.Embed(title=f"A level {self.suitLevel} {self.suit} has appeared!")
         cogEmbed.set_image(url=SUIT_IMAGES[SUIT_NAMES.index(self.suit)])
         cogEmbed.add_field(name="Cog HP", value=f"{self.healthEmoji()} {self.suitHealth}/{self.suitMaxHealth}")
         self.message = await self.channel.send(embed=cogEmbed)
@@ -85,15 +85,21 @@ class SuitFight(commands.Cog):
             await self.thread.delete()
             self.suitHealth = 0
             players = []
-            for i in self.participants:
-                players.append(i.name)
-            players = ", ".join(players)
+
+            if len(self.participants) == 1:
+                players = self.participants[0].name
+            else:
+                for i in range(len(self.participants)-1):
+                    players.append(self.participants[i].name)
+                players = ", ".join(players)
+                players += f" and {self.participants[-1].name}"
+
             reward = int(self.suitLevel)*20
             await self.channel.send(embed=discord.Embed(title=f"Cog defeated! {players} received {reward} Jellybeans!"))
             for i in self.participants:
                 db.add_balance(i.id, reward)
 
-        newEmbed = discord.Embed(title=f"A {self.suit} appeared!")
+        newEmbed = discord.Embed(title=f"A level {self.suitLevel} {self.suit} appeared!")
         newEmbed.set_image(url=SUIT_IMAGES[SUIT_NAMES.index(self.suit)])
         newEmbed.add_field(name="Cog HP", value=f"{self.healthEmoji()} {self.suitHealth}/{self.suitMaxHealth}")
         await self.message.edit(embed=newEmbed)
