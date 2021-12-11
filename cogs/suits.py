@@ -126,6 +126,7 @@ class SuitFight(commands.Cog):
             await self.channel.send(embed=discord.Embed(title=f"Cog defeated! {players} received {reward} Jellybeans!"))
             for i in self.participants:
                 db.add_balance(i.id, reward)
+            self.participants = []
 
         newEmbed = discord.Embed(title=f"A level {self.suitLevel} {self.suit} appeared!")
         newEmbed.set_image(url=SUIT_IMAGES[SUIT_NAMES.index(self.suit)])
