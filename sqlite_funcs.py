@@ -1,9 +1,10 @@
 import sqlite3
+from bot_globals import *
 from discord.ext import commands
 
 con = sqlite3.connect('users.db')
 cur = con.cursor()
-gags = ['Cupcake', 'Fruit Pie Slice', 'Cream Pie Slice', 'Fruit Pie', 'Cream Pie', 'Birthday Cake', 'Wedding Cake']
+gags = GAGS
 
 
 def bal(id: int) -> int:
