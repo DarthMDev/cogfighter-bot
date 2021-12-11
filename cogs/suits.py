@@ -84,7 +84,7 @@ class SuitFight(commands.Cog):
             return
 
         if not db.does_user_exist(ctx.author.id):
-            ctx.send(embed=embedMsg(ctx, msg="Heya! Looks like you're a new toon. Explore the bot in the other playing "
+            await ctx.send(embed=embedMsg(ctx, msg="Heya! Looks like you're a new toon. Explore the bot in the other playing "
                                              "channels and gather some gags before you try to fight a cog!"))
             return
 
