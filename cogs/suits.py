@@ -35,9 +35,37 @@ class SuitFight(commands.Cog):
 
 
     @commands.command()
-    async def startFight(self, ctx, level):
-        self.suit = SUIT_NAMES[random.randint(0, 7)]
-        self.suitLevel = int(level)
+    async def startFight(self, ctx):
+        self.suitLevel = int(random.randint(1, 25))
+        if self.suitLevel == 1 or self.suitLevel == 2:
+            self.suit = SUIT_NAMES[0]
+        elif self.suitLevel == 3 or self.suitLevel == 4:
+            self.suit = SUIT_NAMES[random.randint(0,1)]
+        elif self.suitLevel == 5:
+            self.suit = SUIT_NAMES[random.randint(0,2)]
+        elif self.suitLevel == 6:
+            self.suit = SUIT_NAMES[random.randint(1, 2)]
+        elif self.suitLevel == 7:
+            self.suit = SUIT_NAMES[random.randint(1, 3)]
+        elif self.suitLevel == 8:
+            self.suit = SUIT_NAMES[random.randint(2, 3)]
+        elif self.suitLevel == 9 or self.suitLevel == 10:
+            self.suit = SUIT_NAMES[random.randint(2, 4)]
+        elif self.suitLevel == 11:
+            self.suit = SUIT_NAMES[random.randint(3, 4)]
+        elif self.suitLevel == 12 or self.suitLevel == 13:
+            self.suit = SUIT_NAMES[random.randint(3, 5)]
+        elif self.suitLevel == 14 or self.suitLevel == 15:
+            self.suit = SUIT_NAMES[random.randint(4, 6)]
+        elif self.suitLevel == 16:
+            self.suit = SUIT_NAMES[random.randint(4, 7)]
+        elif self.suitLevel == 17 or self.suitLevel == 18 or self.suitLevel == 19:
+            self.suit = SUIT_NAMES[random.randint(5, 7)]
+        elif self.suitLevel == 20 or self.suitLevel == 21 or self.suitLevel == 22:
+            self.suit = SUIT_NAMES[random.randint(6, 7)]
+        else:
+            self.suit = SUIT_NAMES[7]
+
         self.suitMaxHealth = (self.suitLevel + 1) * (self.suitLevel + 2) * 3
         self.suitHealth = self.suitMaxHealth
         self.channel = await discord.ext.commands.GuildChannelConverter().convert(ctx, '813541240003887142')
@@ -94,7 +122,7 @@ class SuitFight(commands.Cog):
                 players = ", ".join(players)
                 players += f" and {self.participants[-1].name}"
 
-            reward = int(self.suitLevel)*20
+            reward = (int(self.suitLevel)**2) + (10 * int(self.suitLevel))
             await self.channel.send(embed=discord.Embed(title=f"Cog defeated! {players} received {reward} Jellybeans!"))
             for i in self.participants:
                 db.add_balance(i.id, reward)
