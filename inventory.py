@@ -129,5 +129,10 @@ async def opencrate(ctx, arg=1):
         db.set_value(ctx.author.id, 'inventory', inv)
 
     else:
-        await ctx.send(embed=embedMsg(ctx, msg=f'You only have {str(db.fetch_data(ctx.author.id, "crates"))} crates.',
+        if db.fetch_data(ctx.author.id, "crates") > 1:
+            await ctx.send(embed=embedMsg(ctx, msg=f'You only have {str(db.fetch_data(ctx.author.id, "crates"))} crates.',
                                       title=''))
+        elif db.fetch_data(ctx.author.id, "crates") == 1:
+            await ctx.send(embed=embedMsg(ctx, msg='You only have 1 crate.'))
+        else:
+            await ctx.send(embed=embedMsg(ctx, msg='You do not have any crates.'))
