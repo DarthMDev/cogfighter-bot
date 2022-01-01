@@ -1,5 +1,5 @@
 from discord.ext import commands
-import discord 
+import discord
 import sqliteFuncs as db
 
 class ModCommands(commands.Cog):
@@ -13,7 +13,7 @@ class ModCommands(commands.Cog):
     async def mute(self, context, name: discord.Member):
         roleMuted = discord.utils.get(context.guild.roles, name='Muted')
         await name.add_roles(roleMuted)
-        embedMessage=discord.Embed(title='User is now muted!', description ='**{0}** was muted by **{1}**!'.format(name, context.message.author))
+        embedMessage=discord.Embed(title='User is now muted!', description =f'**{name}** was muted by **{context.message.author}**!')
         await context.send(embed=embedMessage)
 
     @commands.command(pass_context=True)
@@ -21,27 +21,27 @@ class ModCommands(commands.Cog):
     async def unmute(self, context, name: discord.Member):
         roleMuted = discord.utils.get(context.guild.roles, name='Muted')
         await name.remove_roles(roleMuted)
-        embedMessage=discord.Embed(title='User is now unmuted!', description ='**{0}** was unmuted by **{1}**!'.format(name, context.message.author))
+        embedMessage=discord.Embed(title='User is now unmuted!', description =f'**{name}** was unmuted by **{context.message.author}**!')
         await context.send(embed=embedMessage)
     @commands.command(pass_context=True)
     @commands.has_guild_permissions(ban_members=True)
     async def ban(self, context, name: discord.Member, *, reason='No reason given.'):
         await context.guild.ban(name, reason=reason)
-        embedMessage=discord.Embed(title='User is now banned!', description='**{0}** was banned by **{1}** for **{2}**'.format(name, context.message.author, reason))
+        embedMessage=discord.Embed(title='User is now banned!', description=f'**{name}** was banned by **{context.message.author}** for **{reason}**')
         await context.send(embed=embedMessage)
 
     @commands.command(pass_context=True)
     @commands.has_guild_permissions(ban_members=True)
     async def unban(self, context, name: discord.Member, *, reason='No reason given.'):
         await context.guild.unban(name, reason=reason)
-        embedMessage=discord.Embed(title='User is now unbanned!', description='**{0}** was unbanned by **{1}** for **{2}**'.format(name, context.message.author, reason))
+        embedMessage=discord.Embed(title='User is now unbanned!', description=f'**{name}** was unbanned by **{context.message.author}** for **{reason}**')
         await context.send(embed=embedMessage)
 
     @commands.command(pass_context=True)
     @commands.has_guild_permissions(kick_members=True)
     async def kick(self, context, name: discord.Member, *, reason='No reason given.'):
         await context.guild.kick(name, reason=reason)
-        embedMessage=discord.Embed(title='User has been kicked!', description='**{0}** was kicked by **{1}** for **{2}**'.format(name, context.message.author,reason ))
+        embedMessage=discord.Embed(title='User has been kicked!', description=f'**{name}** was kicked by **{context.message.author}** for **{reason}**')
         await context.send(embed=embedMessage)
     
     @commands.command(pass_context=True)
