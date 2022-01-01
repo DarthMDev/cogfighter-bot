@@ -6,13 +6,6 @@ from inventory import *
 from testing_commands import *
 
 
-@cogFighter.event
-async def on_ready():
-    print('Cog Fighter Online.')
-    # t = Thread(target= event.Event(cogFighter).guessNumber)
-    # t.start()
-
-
 # This command will start the guess number event
 @cogFighter.command()
 @commands.has_any_role('Staff', 'staff', '🌌 Staff')
@@ -194,9 +187,12 @@ cogs = [
     # "cogs.commands",
     # "cogs.modcommands",
 ]
-for cog in cogs:
-    print(f'loading cog: {cog}')
-    cogFighter.load_extension(cog)
+@cogFighter.event
+async def on_ready():
+    for cog in cogs:
+        print(f'loading cog: {cog}')
+        cogFighter.load_extension(cog)
+    print('Cog Fighter Online.')
 
 if __name__ == "__main__":
     cogFighter.run(TOKEN)
