@@ -29,6 +29,7 @@ with open('config/config.json') as file:
     conf = json.load(file)
 PREFIX = conf.get('prefix')
 TOKEN = conf.get('token')
+MOD_LOG_CHANNEL = 926888860837888100
 cogFighter = commands.Bot(command_prefix=PREFIX)
 
 
