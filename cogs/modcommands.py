@@ -10,7 +10,7 @@ class ModCommands(commands.Cog):
 
     @commands.command(aliases=['timeout'])
     @commands.has_role('Discord Moderation Team')
-    async def mute(self, ctx, member=None, duration=1, reason="No reason specified."):
+    async def mute(self, ctx, member=None, duration=1, *, reason="No reason specified."):
         if member is None:
             await ctx.author.send("Please specify a user to be muted.")
             await ctx.message.delete()
