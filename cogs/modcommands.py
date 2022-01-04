@@ -17,17 +17,14 @@ class ModCommands(commands.Cog):
             return
         try:
             member = await discord.ext.commands.MemberConverter().convert(ctx, member)
-            try:
-                await member.timeout_for(timedelta(minutes=duration))
-            except:
-                #For handling errors like out of date discord.py 
-                await ctx.author.send("Error with timeout function. Please contact the lead developer of the dev team.")
+            await member.timeout_for(timedelta(minutes=duration))
+
             await self.logchannel.send(embed=embedMsg(ctx, msg=f"**{member}** [{member.id}] was muted for {duration}"
                                                                f" minute(s). For {reason} "))
             await ctx.author.send(f"You have just muted {member}, remember to add a reason to the google sheets if "
                                   f"not given in the command.")
         except:
-            await ctx.author.send("Cannot mute that member or you specified an invalid member.")
+            await ctx.author.send("Error: Cannot mute that member, you specified an invalid member or something went wrong.")
         #check if duration is a number
 
         try:
