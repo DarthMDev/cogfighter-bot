@@ -21,7 +21,7 @@ class ModCommands(commands.Cog):
                 await member.timeout_for(timedelta(minutes=duration))
             except:
                 #For handling errors like out of date discord.py 
-                await ctx.author.send("Error with timeout function. Please contact the developer of this bot.")
+                await ctx.author.send("Error with timeout function. Please contact the lead developer of the dev team.")
             await self.logchannel.send(embed=embedMsg(ctx, msg=f"**{member}** [{member.id}] was muted for {duration}"
                                                                f" minute(s). For {reason} "))
             await ctx.author.send(f"You have just muted {member}, remember to add a reason to the google sheets if "
